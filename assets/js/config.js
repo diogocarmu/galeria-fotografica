@@ -9,7 +9,7 @@
 const CONFIG = Object.freeze({
 
   // ── Endpoint GAS ────────────────────────────────────────────
-  GAS_ENDPOINT: "https://script.google.com/macros/s/SUBSTITUIR_AQUI/exec",
+  GAS_ENDPOINT: "https://script.google.com/macros/s/AKfycbwQfTZbfmOif6lsmSC5Zdyh82IGHr41J3HVcix4TDwZ7NdMFT0aWDzD1qvjSduplvG2/exec",
 
   // ── Scroll infinito ─────────────────────────────────────────
   BATCH_SIZE: 20,               // Fotos renderizadas por batch
