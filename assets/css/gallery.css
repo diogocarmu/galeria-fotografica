@@ -1,0 +1,218 @@
+/* ═══════════════════════════════════════════
+   DESIGN TOKENS
+   ═══════════════════════════════════════════ */
+
+:root {
+  /* Paleta — fundo escuro neutro para não competir com as fotos */
+  --color-bg:          #0a0a0a;
+  --color-text:        #e8e8e8;
+  --color-text-muted:  #888888;
+  --color-surface:     #111111;
+  --color-border:      #1a1a1a;
+
+  /* Tipografia */
+  --font-display: "Cormorant Garamond", Georgia, serif;   /* Títulos — elegante, editorial */
+  --font-body:    "DM Sans", system-ui, sans-serif;       /* Corpo — legível, neutro */
+
+  /* Galeria */
+  --gallery-gap:       1px;    /* Invariante #5 — nunca alterar */
+  --gallery-cols:      4;      /* Override por breakpoint em responsive.css */
+
+  /* Cartão — verso */
+  --card-back-bg:      rgba(10, 10, 10, 0.96);
+  --card-back-padding: 1.5rem;
+
+  /* Flip */
+  --flip-duration: 0.55s;
+  --flip-easing:   cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Loader */
+  --loader-size: 2rem;
+  --loader-color: #444;
+}
+
+/* ═══════════════════════════════════════════
+   GALERIA — CSS COLUMNS
+   ═══════════════════════════════════════════ */
+
+#gallery {
+  columns: var(--gallery-cols);
+  column-gap: var(--gallery-gap);
+  padding: 0;                        /* Sem padding exterior — fotos até à borda */
+  width: 100%;
+}
+
+/* ═══════════════════════════════════════════
+   CARTÃO
+   ═══════════════════════════════════════════ */
+
+.card {
+  break-inside: avoid;               /* Impede que um cartão quebre entre colunas */
+  display: block;
+  position: relative;
+  width: 100%;
+  margin-bottom: var(--gallery-gap); /* Invariante #5 — gap vertical entre cartões */
+  cursor: default;
+  perspective: 1000px;               /* Necessário para flip 3D */
+  overflow: hidden;
+}
+
+/* Orientações — aspect-ratio aplicado via JS (CONFIG.RATIOS)
+   O CSS aqui é fallback de segurança */
+.card--landscape { aspect-ratio: 4 / 3; }
+.card--portrait  { aspect-ratio: 3 / 4; }
+.card--square    { aspect-ratio: 1 / 1; }
+
+/* ── Inner — container do flip ────────────────────────────── */
+
+.card__inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform var(--flip-duration) var(--flip-easing);
+}
+
+/* Flip ativo — só tem efeito quando FLIP_ENABLED=true (via JS) */
+.card--flipped .card__inner {
+  transform: rotateY(180deg);
+}
+
+/* ── Faces ───────────────────────────────────────────────── */
+
+.card__face {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;   /* Safari */
+}
+
+/* Frente */
+.card__face--front {
+  z-index: 1;
+}
+
+.card__face--front img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;                     /* Preenche sem deformar */
+  display: block;
+  transition: opacity 0.3s ease;
+}
+
+/* Imagem enquanto carrega */
+.card__face--front img:not([src]),
+.card__face--front img[src=""] {
+  opacity: 0;
+}
+
+/* Verso — skeleton presente, sem estilo final (sessão flip) */
+.card__face--back {
+  transform: rotateY(180deg);
+  background-color: var(--card-back-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--card-back-padding);
+
+  /* Verso invisível quando flip desativado */
+  visibility: hidden;
+}
+
+[data-flip="true"] .card__face--back {
+  visibility: visible;
+}
+
+.card__back-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  max-height: 100%;
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+
+.card__back-inner::-webkit-scrollbar {
+  display: none;
+}
+
+/* Tipografia do verso — placeholder até sessão flip */
+.card__titulo {
+  font-family: var(--font-display);
+  font-size: clamp(1rem, 2.5vw, 1.5rem);
+  font-weight: 400;
+  color: var(--color-text);
+  line-height: 1.2;
+}
+
+.card__texto {
+  font-family: var(--font-body);
+  font-size: clamp(0.75rem, 1.5vw, 0.875rem);
+  color: var(--color-text-muted);
+  line-height: 1.6;
+}
+
+.card__camera {
+  font-family: var(--font-body);
+  font-size: 0.7rem;
+  color: var(--color-text-muted);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-top: auto;
+}
+
+/* ── Cursor — só quando flip ativo ───────────────────────── */
+[data-flip="true"] {
+  cursor: pointer;
+}
+
+/* ═══════════════════════════════════════════
+   LOADER
+   ═══════════════════════════════════════════ */
+
+#loader {
+  display: none;
+  width: var(--loader-size);
+  height: var(--loader-size);
+  margin: 3rem auto;
+  border: 2px solid var(--loader-color);
+  border-top-color: var(--color-text);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ═══════════════════════════════════════════
+   ERRO
+   ═══════════════════════════════════════════ */
+
+#error-msg {
+  display: none;
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+  text-align: center;
+  padding: 4rem 2rem;
+  letter-spacing: 0.04em;
+}
+
+/* ═══════════════════════════════════════════
+   SENTINEL — ancora do IntersectionObserver
+   ═══════════════════════════════════════════ */
+
+#sentinel {
+  width: 100%;
+  height: 1px;               /* Invisível mas observável */
+  pointer-events: none;
+}
+
+/* ═══════════════════════════════════════════
+   IMPORTAÇÃO DE FONTES (Google Fonts)
+   ═══════════════════════════════════════════ */
+
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=DM+Sans:wght@300;400&display=swap');

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- ══════════════════════════════════════════
+       SEO — Meta tags estáticos
+       Visíveis a TODOS os crawlers, mesmo sem JS.
+       Editar os valores entre aspas.
+       ══════════════════════════════════════════ -->
+
+  <title>Galeria · SUBSTITUIR NOME</title>
+  <meta name="description"
+        content="SUBSTITUIR — Descrição da galeria. 150–160 caracteres idealmente." />
+  <meta name="author"      content="SUBSTITUIR NOME DO AUTOR" />
+  <meta name="robots"      content="index, follow" />
+  <link rel="canonical"    href="SUBSTITUIR URL GITHUB PAGES" />
+
+  <!-- ── Open Graph (partilha em redes sociais) ── -->
+  <meta property="og:type"        content="website" />
+  <meta property="og:site_name"   content="SUBSTITUIR NOME" />
+  <meta property="og:title"       content="Galeria · SUBSTITUIR NOME" />
+  <meta property="og:description" content="SUBSTITUIR — Mesma descrição do meta description." />
+  <meta property="og:url"         content="SUBSTITUIR URL GITHUB PAGES" />
+  <meta property="og:image"       content="SUBSTITUIR URL IMAGEM PREVIEW (1200x630px)" />
+  <meta property="og:locale"      content="pt_PT" />
+
+  <!-- ── Twitter/X Card ── -->
+  <meta name="twitter:card"        content="summary_large_image" />
+  <meta name="twitter:title"       content="Galeria · SUBSTITUIR NOME" />
+  <meta name="twitter:description" content="SUBSTITUIR — Mesma descrição." />
+  <meta name="twitter:image"       content="SUBSTITUIR URL IMAGEM PREVIEW" />
+
+  <!-- ══════════════════════════════════════════
+       GEO — Schema.org estático mínimo
+       JSON-LD completo injetado por seo.js após
+       fetch. Este bloco garante indexação mesmo
+       sem execução de JS.
+       ══════════════════════════════════════════ -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "ImageGallery",
+    "name": "SUBSTITUIR NOME",
+    "description": "SUBSTITUIR DESCRIÇÃO",
+    "url": "SUBSTITUIR URL GITHUB PAGES",
+    "author": {
+      "@type": "Person",
+      "name": "SUBSTITUIR NOME DO AUTOR"
+    }
+  }
+  </script>
+
+  <!-- ══════════════════════════════════════════
+       FAVICON
+       ══════════════════════════════════════════ -->
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+
+  <!-- ══════════════════════════════════════════
+       FONTES — preconnect para reduzir latência
+       ══════════════════════════════════════════ -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+  <!-- ══════════════════════════════════════════
+       CSS — ordem de carregamento importa
+       ══════════════════════════════════════════ -->
+  <link rel="stylesheet" href="assets/css/reset.css" />
+  <link rel="stylesheet" href="assets/css/gallery.css" />
+  <link rel="stylesheet" href="assets/css/responsive.css" />
+  <link rel="stylesheet" href="assets/css/skip-link.css" />
+
+</head>
+<body>
+
+  <!-- ══════════════════════════════════════════
+       ACESSIBILIDADE — skip link
+       ══════════════════════════════════════════ -->
+  <a href="#gallery" class="skip-link">Saltar para a galeria</a>
+
+  <!-- ══════════════════════════════════════════
+       GALERIA
+       ══════════════════════════════════════════ -->
+  <main>
+
+    <!-- Loader — visível durante fetch -->
+    <div id="loader" role="status" aria-label="A carregar galeria"></div>
+
+    <!-- Mensagem de erro — visível se fetch falhar -->
+    <p id="error-msg" role="alert"></p>
+
+    <!-- Grid de cartões — preenchido por gallery.js -->
+    <section
+      id="gallery"
+      aria-label="Galeria fotográfica"
+    ></section>
+
+    <!-- Sentinel — âncora do IntersectionObserver -->
+    <div id="sentinel" aria-hidden="true"></div>
+
+  </main>
+
+  <!-- ══════════════════════════════════════════
+       JS — ordem obrigatória:
+       1. config   (variáveis globais)
+       2. seo      (função injectStructuredData)
+       3. api      (função fetchFotos — chama CONFIG)
+       4. gallery  (init — chama fetchFotos + injectStructuredData)
+       ══════════════════════════════════════════ -->
+  <script src="assets/js/config.js"></script>
+  <script src="assets/js/seo.js"></script>
+  <script src="assets/js/api.js"></script>
+  <script src="assets/js/gallery.js"></script>
+
+</body>
+</html>
