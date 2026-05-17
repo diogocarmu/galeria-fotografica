@@ -2,33 +2,37 @@
    DESIGN TOKENS
    ═══════════════════════════════════════════ */
 
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:wght@300;400&display=swap');
+
 :root {
-  /* Paleta — fundo escuro neutro para não competir com as fotos */
+  /* Paleta */
   --color-bg:          #0a0a0a;
   --color-text:        #e8e8e8;
   --color-text-muted:  #888888;
+  --color-text-faint:  #555555;
   --color-surface:     #111111;
-  --color-border:      #1a1a1a;
+  --color-accent:      #c8a96e;   /* Dourado subtil — editorial */
+  --color-border:      #1e1e1e;
 
   /* Tipografia */
-  --font-display: "Cormorant Garamond", Georgia, serif;   /* Títulos — elegante, editorial */
-  --font-body:    "DM Sans", system-ui, sans-serif;       /* Corpo — legível, neutro */
+  --font-display: "Cormorant Garamond", Georgia, serif;
+  --font-body:    "DM Sans", system-ui, sans-serif;
 
   /* Galeria */
-  --gallery-gap:       1px;    /* Invariante #5 — nunca alterar */
-  --gallery-cols:      4;      /* Override por breakpoint em responsive.css */
-
-  /* Cartão — verso */
-  --card-back-bg:      rgba(10, 10, 10, 0.96);
-  --card-back-padding: 1.5rem;
+  --gallery-gap:  1px;
+  --gallery-cols: 4;
 
   /* Flip */
-  --flip-duration: 0.55s;
+  --flip-duration: 0.6s;
   --flip-easing:   cubic-bezier(0.4, 0, 0.2, 1);
 
+  /* Verso */
+  --back-bg:      rgba(8, 8, 8, 0.97);
+  --back-padding: clamp(1rem, 3vw, 1.75rem);
+
   /* Loader */
-  --loader-size: 2rem;
-  --loader-color: #444;
+  --loader-size:  2rem;
+  --loader-color: #333;
 }
 
 /* ═══════════════════════════════════════════
@@ -38,8 +42,8 @@
 #gallery {
   columns: var(--gallery-cols);
   column-gap: var(--gallery-gap);
-  padding: 0;                        /* Sem padding exterior — fotos até à borda */
   width: 100%;
+  padding: 0;
 }
 
 /* ═══════════════════════════════════════════
@@ -47,18 +51,16 @@
    ═══════════════════════════════════════════ */
 
 .card {
-  break-inside: avoid;               /* Impede que um cartão quebre entre colunas */
+  break-inside: avoid;
   display: block;
   position: relative;
   width: 100%;
-  margin-bottom: var(--gallery-gap); /* Invariante #5 — gap vertical entre cartões */
-  cursor: default;
-  perspective: 1000px;               /* Necessário para flip 3D */
+  margin-bottom: var(--gallery-gap);
+  perspective: 1200px;
+  cursor: pointer;
   overflow: hidden;
 }
 
-/* Orientações — aspect-ratio aplicado via JS (CONFIG.RATIOS)
-   O CSS aqui é fallback de segurança */
 .card--landscape { aspect-ratio: 4 / 3; }
 .card--portrait  { aspect-ratio: 3 / 4; }
 .card--square    { aspect-ratio: 1 / 1; }
@@ -71,9 +73,9 @@
   height: 100%;
   transform-style: preserve-3d;
   transition: transform var(--flip-duration) var(--flip-easing);
+  will-change: transform;
 }
 
-/* Flip ativo — só tem efeito quando FLIP_ENABLED=true (via JS) */
 .card--flipped .card__inner {
   transform: rotateY(180deg);
 }
@@ -86,7 +88,7 @@
   width: 100%;
   height: 100%;
   backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;   /* Safari */
+  -webkit-backface-visibility: hidden;
 }
 
 /* Frente */
@@ -97,75 +99,164 @@
 .card__face--front img {
   width: 100%;
   height: 100%;
-  object-fit: cover;                     /* Preenche sem deformar */
+  object-fit: cover;
   display: block;
-  transition: opacity 0.3s ease;
+  transition: opacity 0.4s ease, transform 0.6s ease;
 }
 
-/* Imagem enquanto carrega */
-.card__face--front img:not([src]),
-.card__face--front img[src=""] {
-  opacity: 0;
+.card:hover .card__face--front img {
+  transform: scale(1.02);
 }
 
-/* Verso — skeleton presente, sem estilo final (sessão flip) */
+/* ── Verso ───────────────────────────────────────────────── */
+
 .card__face--back {
   transform: rotateY(180deg);
-  background-color: var(--card-back-bg);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: var(--card-back-padding);
-
-  /* Verso invisível quando flip desativado */
-  visibility: hidden;
-}
-
-[data-flip="true"] .card__face--back {
-  visibility: visible;
-}
-
-.card__back-inner {
+  background-color: var(--back-bg);
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
-  max-height: 100%;
-  overflow-y: auto;
-  scrollbar-width: none;
+  overflow: hidden;
 }
 
-.card__back-inner::-webkit-scrollbar {
+/* Thumbnail no topo */
+.card__back-thumb {
+  width: 100%;
+  flex: 0 0 35%;
+  overflow: hidden;
+  position: relative;
+}
+
+.card__back-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  filter: brightness(0.7);
+}
+
+/* Linha decorativa */
+.card__back-thumb::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: var(--back-padding);
+  right: var(--back-padding);
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--color-accent), transparent);
+}
+
+/* Conteúdo textual */
+.card__back-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: var(--back-padding);
+  gap: 0.6rem;
+  overflow-y: auto;
+  scrollbar-width: none;
+  position: relative;
+}
+
+.card__back-content::-webkit-scrollbar {
   display: none;
 }
 
-/* Tipografia do verso — placeholder até sessão flip */
+/* Título */
 .card__titulo {
   font-family: var(--font-display);
-  font-size: clamp(1rem, 2.5vw, 1.5rem);
+  font-size: clamp(0.9rem, 2.2vw, 1.3rem);
   font-weight: 400;
+  font-style: italic;
   color: var(--color-text);
-  line-height: 1.2;
+  line-height: 1.25;
+  letter-spacing: 0.01em;
 }
 
+/* Texto editorial */
 .card__texto {
-  font-family: var(--font-body);
-  font-size: clamp(0.75rem, 1.5vw, 0.875rem);
+  font-family: var(--font-display);
+  font-size: clamp(0.7rem, 1.4vw, 0.85rem);
+  font-weight: 300;
   color: var(--color-text-muted);
-  line-height: 1.6;
+  line-height: 1.65;
+  flex: 1;
 }
 
-.card__camera {
-  font-family: var(--font-body);
-  font-size: 0.7rem;
-  color: var(--color-text-muted);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+/* Metadados — câmara, data, GPS */
+.card__meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
   margin-top: auto;
+  padding-top: 0.6rem;
+  border-top: 1px solid var(--color-border);
 }
 
-/* ── Cursor — só quando flip ativo ───────────────────────── */
-[data-flip="true"] {
+.card__meta-item {
+  font-family: var(--font-body);
+  font-size: 0.65rem;
+  font-weight: 300;
+  color: var(--color-text-faint);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.card__meta-item a {
+  color: var(--color-accent);
+  text-decoration: none;
+  transition: opacity 0.2s;
+}
+
+.card__meta-item a:hover {
+  opacity: 0.7;
+}
+
+/* Botão fechar */
+.card__close {
+  position: absolute;
+  top: 0.6rem;
+  right: 0.6rem;
+  width: 1.5rem;
+  height: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 50%;
   cursor: pointer;
+  color: var(--color-text-muted);
+  font-size: 0.7rem;
+  line-height: 1;
+  transition: background 0.2s, color 0.2s;
+  z-index: 10;
+  flex-shrink: 0;
+}
+
+.card__close:hover {
+  background: rgba(255,255,255,0.12);
+  color: var(--color-text);
+}
+
+/* Timer — barra de progresso do fecho automático */
+.card__timer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 2px;
+  width: 100%;
+  background: var(--color-accent);
+  transform-origin: left;
+  transform: scaleX(1);
+  transition: none;
+}
+
+.card__timer--running {
+  transform: scaleX(0);
+  transition: transform 10s linear;
 }
 
 /* ═══════════════════════════════════════════
@@ -202,17 +293,42 @@
 }
 
 /* ═══════════════════════════════════════════
-   SENTINEL — ancora do IntersectionObserver
+   SENTINEL
    ═══════════════════════════════════════════ */
 
 #sentinel {
   width: 100%;
-  height: 1px;               /* Invisível mas observável */
+  height: 1px;
   pointer-events: none;
 }
 
 /* ═══════════════════════════════════════════
-   IMPORTAÇÃO DE FONTES (Google Fonts)
+   SKIP LINK
    ═══════════════════════════════════════════ */
 
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=DM+Sans:wght@300;400&display=swap');
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: 0;
+  background: var(--color-text);
+  color: var(--color-bg);
+  padding: 0.5rem 1rem;
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  z-index: 9999;
+  transition: top 0.2s;
+}
+
+.skip-link:focus {
+  top: 0;
+}
+
+/* ═══════════════════════════════════════════
+   PREFERS REDUCED MOTION
+   ═══════════════════════════════════════════ */
+
+@media (prefers-reduced-motion: reduce) {
+  .card__inner { transition: none; }
+  .card__timer--running { transition: none; }
+  #loader { animation: none; }
+}

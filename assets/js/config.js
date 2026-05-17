@@ -12,13 +12,12 @@ const CONFIG = Object.freeze({
   GAS_ENDPOINT: "https://script.google.com/macros/s/AKfycbwQfTZbfmOif6lsmSC5Zdyh82IGHr41J3HVcix4TDwZ7NdMFT0aWDzD1qvjSduplvG2/exec",
 
   // ── Scroll infinito ─────────────────────────────────────────
-  BATCH_SIZE: 20,               // Fotos renderizadas por batch
+  BATCH_SIZE: 20,
 
   // ── Layout ──────────────────────────────────────────────────
-  GAP_PX: 1,                    // Intervalo entre cartões (px) — invariante #5
+  GAP_PX: 1,
 
   // ── Rácios dos cartões por orientação ───────────────────────
-  // Usados como aspect-ratio CSS. Ajustar se necessário.
   RATIOS: Object.freeze({
     landscape: "4 / 3",
     portrait:  "3 / 4",
@@ -26,11 +25,12 @@ const CONFIG = Object.freeze({
   }),
 
   // ── Flip ────────────────────────────────────────────────────
-  FLIP_ENABLED: false,          // Ativar na sessão dedicada ao flip
+  FLIP_ENABLED:       true,
+  FLIP_AUTO_CLOSE_MS: 10000,   // Fecho automático após 10 segundos
 
   // ── SEO ─────────────────────────────────────────────────────
-  SITE_NAME:        "Galeria",  // Substituir pelo nome real
-  SITE_DESCRIPTION: "",         // Substituir pela descrição real
-  SITE_URL:         "",         // Substituir pelo URL GitHub Pages
+  SITE_NAME:        "Galeria",
+  SITE_DESCRIPTION: "",
+  SITE_URL:         "",
 
 });
