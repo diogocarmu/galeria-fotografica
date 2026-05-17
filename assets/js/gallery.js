@@ -180,10 +180,10 @@ function criarVerso(foto) {
   content.appendChild(titulo);
   content.appendChild(texto);
   content.appendChild(meta);
-  content.appendChild(timerBar);
 
   back.appendChild(thumbDiv);
   back.appendChild(content);
+  back.appendChild(timerBar);
 
   return back;
 }

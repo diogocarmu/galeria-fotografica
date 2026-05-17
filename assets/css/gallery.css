@@ -118,6 +118,19 @@
   overflow: hidden;
 }
 
+/* Timer — barra de progresso do fecho automático */
+.card__timer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 2px;
+  width: 100%;
+  background: var(--color-accent);
+  transform-origin: left;
+  transform: scaleX(1);
+  transition: none;
+}
+
 /* Thumbnail no topo */
 .card__back-thumb {
   width: 100%;
@@ -164,7 +177,7 @@
 /* Título */
 .card__titulo {
   font-family: var(--font-display);
-  font-size: clamp(0.9rem, 2.2vw, 1.3rem);
+  font-size: clamp(1.1rem, 2.5vw, 1.5rem);
   font-weight: 400;
   font-style: italic;
   color: var(--color-text);
@@ -175,7 +188,7 @@
 /* Texto editorial */
 .card__texto {
   font-family: var(--font-display);
-  font-size: clamp(0.7rem, 1.4vw, 0.85rem);
+  font-size: clamp(0.95rem, 1.8vw, 1.05rem);
   font-weight: 300;
   color: var(--color-text-muted);
   line-height: 1.65;
@@ -194,7 +207,7 @@
 
 .card__meta-item {
   font-family: var(--font-body);
-  font-size: 0.65rem;
+  font-size: 0.8rem;
   font-weight: 300;
   color: var(--color-text-faint);
   letter-spacing: 0.06em;
@@ -239,19 +252,6 @@
 .card__close:hover {
   background: rgba(255,255,255,0.12);
   color: var(--color-text);
-}
-
-/* Timer — barra de progresso do fecho automático */
-.card__timer {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  height: 2px;
-  width: 100%;
-  background: var(--color-accent);
-  transform-origin: left;
-  transform: scaleX(1);
-  transition: none;
 }
 
 .card__timer--running {
