@@ -2,7 +2,7 @@
  * gallery.js — Render de cartões e scroll infinito.
  *
  * Responsabilidades:
- *   1. Construir cartões DOM (frente + verso com flip)
+ *   1. Construir cartões DOM (frente + verso literário PT/EN)
  *   2. Gerir flip — um cartão aberto de cada vez
  *   3. Timer de fecho automático (10s)
  *   4. Render em batches via IntersectionObserver
@@ -12,29 +12,21 @@
 
 // ── Referências DOM ──────────────────────────────────────────
 
-const galleryEl  = document.getElementById("gallery");
-const sentinelEl = document.getElementById("sentinel");
-const loaderEl   = document.getElementById("loader");
-const errorEl    = document.getElementById("error-msg");
+const galleryEl   = document.getElementById("gallery");
+const sentinelEl  = document.getElementById("sentinel");
+const loaderEl    = document.getElementById("loader");
+const errorEl     = document.getElementById("error-msg");
 
 // ── Estado interno ───────────────────────────────────────────
 
-let allFotos  = [];
-let rendered  = 0;
-let cardActivo = null;   // Cartão actualmente virado
-let timerActivo = null;  // ID do setTimeout do fecho automático
+let allFotos    = [];
+let rendered    = 0;
+let cardActivo  = null;
+let timerActivo = null;
 
 // ── Gestão do flip ───────────────────────────────────────────
 
-/**
- * Abre o verso de um cartão.
- * Fecha o cartão anterior se existir (invariante #20).
- * Inicia o timer de fecho automático (invariante #16).
- *
- * @param {HTMLElement} card
- */
 function abrirFlip(card) {
-  // Fecha o anterior sem animação de timer
   if (cardActivo && cardActivo !== card) {
     fecharFlip(cardActivo);
   }
@@ -42,51 +34,40 @@ function abrirFlip(card) {
   card.classList.add("card--flipped");
   cardActivo = card;
 
-  // Inicia barra de timer
   const timer = card.querySelector(".card__timer");
   if (timer) {
     timer.classList.remove("card__timer--running");
-    // Força reflow para reiniciar a transição CSS
     void timer.offsetWidth;
     timer.classList.add("card__timer--running");
   }
 
-  // Timer de fecho automático (invariante #16)
   clearTimeout(timerActivo);
-  timerActivo = setTimeout(() => {
-    fecharFlip(card);
-  }, CONFIG.FLIP_AUTO_CLOSE_MS);
+  timerActivo = setTimeout(() => fecharFlip(card), CONFIG.FLIP_AUTO_CLOSE_MS);
 }
 
-/**
- * Fecha o verso de um cartão.
- * Cancela o timer se ainda estiver activo (invariante #17).
- *
- * @param {HTMLElement} card
- */
 function fecharFlip(card) {
   card.classList.remove("card--flipped");
 
   const timer = card.querySelector(".card__timer");
-  if (timer) {
-    timer.classList.remove("card__timer--running");
-  }
+  if (timer) timer.classList.remove("card__timer--running");
 
-  if (cardActivo === card) {
-    cardActivo = null;
-  }
-
+  if (cardActivo === card) cardActivo = null;
   clearTimeout(timerActivo);
   timerActivo = null;
 }
 
-// ── Construção do verso ──────────────────────────────────────
+// ── Utilitários ──────────────────────────────────────────────
 
-/**
- * Formata data "YYYY-MM-DD" para "DD MMM YYYY" em pt-PT.
- * @param {string|null} data
- * @returns {string}
- */
+function escapeHtml(str) {
+  if (typeof str !== "string") return "";
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
 function formatarData(data) {
   if (!data) return "";
   try {
@@ -98,11 +79,36 @@ function formatarData(data) {
   }
 }
 
+// ── Construção do bloco de texto literário ───────────────────
+
 /**
- * Constrói o elemento do verso do cartão.
- * @param {Foto} foto
+ * Cria um bloco com label de língua + texto do poema/citação.
+ * Usa textContent para segurança XSS — white-space:pre-wrap
+ * preserva as quebras de linha (\n) do texto literário.
+ *
+ * @param {string} lang   — ex: "PT" ou "EN"
+ * @param {string} texto  — texto com \n para quebras de linha
  * @returns {HTMLElement}
  */
+function criarBlocoTexto(lang, texto) {
+  const bloco = document.createElement("div");
+  bloco.className = "card__texto-bloco";
+
+  const label = document.createElement("span");
+  label.className   = "card__texto-lang";
+  label.textContent = lang;
+
+  const p = document.createElement("p");
+  p.className   = "card__texto";
+  p.textContent = texto || ""; // textContent respeita \n com white-space:pre-wrap
+
+  bloco.appendChild(label);
+  bloco.appendChild(p);
+  return bloco;
+}
+
+// ── Construção do verso ──────────────────────────────────────
+
 function criarVerso(foto) {
   const back = document.createElement("div");
   back.className = "card__face card__face--back";
@@ -116,11 +122,11 @@ function criarVerso(foto) {
   thumbImg.loading = "lazy";
   thumbDiv.appendChild(thumbImg);
 
-  // Conteúdo textual
+  // Conteúdo
   const content = document.createElement("div");
   content.className = "card__back-content";
 
-  // Botão fechar (invariante #17)
+  // Botão fechar
   const btnFechar = document.createElement("button");
   btnFechar.className = "card__close";
   btnFechar.setAttribute("aria-label", "Fechar");
@@ -129,18 +135,49 @@ function criarVerso(foto) {
   // Título
   const titulo = document.createElement("h2");
   titulo.className   = "card__titulo";
-  titulo.textContent = escapeHtml(foto.titulo) || "";
+  titulo.textContent = foto.titulo || "";
 
-  // Texto editorial
-  const texto = document.createElement("p");
-  texto.className   = "card__texto";
-  texto.textContent = escapeHtml(foto.texto_editorial) || "";
+  // Textos literários PT + EN
+  const textos = document.createElement("div");
+  textos.className = "card__textos";
 
-  // Metadados
+  const idioma = (foto.idioma_original || "").toLowerCase();
+
+  // Determina ordem e conteúdo PT/EN
+  // Regra: mostra sempre PT e EN, nunca o original separado
+  // Se original é PT → texto_pt é o original, texto_en é tradução
+  // Se original é EN → texto_en é o original, texto_pt é tradução
+  // Se outro idioma → texto_pt e texto_en são ambos traduções
+  const textoPT = foto.texto_pt || foto.texto_editorial || "";
+  const textoEN = foto.texto_en || "";
+
+  if (textoPT) {
+    textos.appendChild(criarBlocoTexto("PT", textoPT));
+  }
+
+  if (textoEN && textoPT) {
+    const sep = document.createElement("div");
+    sep.className = "card__texto-sep";
+    textos.appendChild(sep);
+  }
+
+  if (textoEN) {
+    textos.appendChild(criarBlocoTexto("EN", textoEN));
+  }
+
+  // Atribuição — autor e ano
+  if (foto.autor_texto) {
+    const attr = document.createElement("p");
+    attr.className = "card__atribuicao";
+    const ano = foto.ano_texto ? `, ${foto.ano_texto}` : "";
+    attr.innerHTML = `<em>${escapeHtml(foto.autor_texto)}</em>${escapeHtml(ano)}`;
+    textos.appendChild(attr);
+  }
+
+  // Metadados — câmara, data, GPS
   const meta = document.createElement("div");
   meta.className = "card__meta";
 
-  // Câmara
   if (foto.camera && foto.camera !== "desconhecida") {
     const itemCamera = document.createElement("span");
     itemCamera.className   = "card__meta-item";
@@ -148,7 +185,6 @@ function criarVerso(foto) {
     meta.appendChild(itemCamera);
   }
 
-  // Data EXIF
   const dataFormatada = formatarData(foto.data_foto);
   if (dataFormatada) {
     const itemData = document.createElement("span");
@@ -157,51 +193,44 @@ function criarVerso(foto) {
     meta.appendChild(itemData);
   }
 
-  // GPS — link para Google Maps (invariante #18 e #19)
   if (foto.coordenadas_gps) {
     const [lat, lng] = foto.coordenadas_gps.split(",");
     const itemGps = document.createElement("span");
     itemGps.className = "card__meta-item";
     const linkGps = document.createElement("a");
-    linkGps.href   = `https://www.google.com/maps?q=${lat},${lng}`;
-    linkGps.target = "_blank";
-    linkGps.rel    = "noopener noreferrer";
+    linkGps.href    = `https://www.google.com/maps?q=${lat},${lng}`;
+    linkGps.target  = "_blank";
+    linkGps.rel     = "noopener noreferrer";
     linkGps.textContent = `${parseFloat(lat).toFixed(4)}°, ${parseFloat(lng).toFixed(4)}°`;
     itemGps.appendChild(linkGps);
     meta.appendChild(itemGps);
   }
 
-  // Barra de timer
+  // Timer — filho directo do .card__face--back
   const timerBar = document.createElement("div");
   timerBar.className = "card__timer";
 
   // Montagem
   content.appendChild(btnFechar);
   content.appendChild(titulo);
-  content.appendChild(texto);
+  content.appendChild(textos);
   content.appendChild(meta);
 
   back.appendChild(thumbDiv);
   back.appendChild(content);
-  back.appendChild(timerBar);
+  back.appendChild(timerBar);  // fora do content — não sobe com scroll
 
   return back;
 }
 
 // ── Construção do cartão ─────────────────────────────────────
 
-/**
- * Cria o elemento DOM completo de um cartão fotográfico.
- * @param {Foto} foto
- * @returns {HTMLElement}
- */
 function criarCartao(foto) {
   const article = document.createElement("article");
-  article.className    = `card card--${foto.orientacao}`;
-  article.dataset.id   = foto.id;
+  article.className         = `card card--${foto.orientacao}`;
+  article.dataset.id        = foto.id;
   article.style.aspectRatio = CONFIG.RATIOS[foto.orientacao];
 
-  // Frente
   const front = document.createElement("div");
   front.className = "card__face card__face--front";
 
@@ -212,32 +241,24 @@ function criarCartao(foto) {
   img.decoding = "async";
   front.appendChild(img);
 
-  // Verso
-  const back = criarVerso(foto);
-
-  // Inner
+  const back  = criarVerso(foto);
   const inner = document.createElement("div");
   inner.className = "card__inner";
   inner.appendChild(front);
   inner.appendChild(back);
   article.appendChild(inner);
 
-  // Listeners de flip (invariantes #15, #17, #20)
   article.addEventListener("click", (e) => {
-    // Clique no botão fechar
     if (e.target.closest(".card__close")) {
       e.stopPropagation();
       fecharFlip(article);
       return;
     }
-    // Clique no link GPS — não dispara flip
     if (e.target.closest("a")) return;
 
-    if (article.classList.contains("card--flipped")) {
-      fecharFlip(article);
-    } else {
-      abrirFlip(article);
-    }
+    article.classList.contains("card--flipped")
+      ? fecharFlip(article)
+      : abrirFlip(article);
   });
 
   return article;
@@ -257,16 +278,13 @@ function renderBatch() {
   const fragment = document.createDocumentFragment();
   batch.forEach((foto) => fragment.appendChild(criarCartao(foto)));
   galleryEl.appendChild(fragment);
-
   rendered += batch.length;
 }
 
 // ── IntersectionObserver ─────────────────────────────────────
 
 const observer = new IntersectionObserver(
-  (entries) => {
-    if (entries[0].isIntersecting) renderBatch();
-  },
+  (entries) => { if (entries[0].isIntersecting) renderBatch(); },
   { root: null, rootMargin: "200px", threshold: 0 }
 );
 
@@ -301,19 +319,5 @@ async function iniciarGaleria() {
   renderBatch();
   observer.observe(sentinelEl);
 }
-
-// ── Utilitários ──────────────────────────────────────────────
-
-function escapeHtml(str) {
-  if (typeof str !== "string") return "";
-  return str
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
-}
-
-// ── Init ─────────────────────────────────────────────────────
 
 document.addEventListener("DOMContentLoaded", iniciarGaleria);
