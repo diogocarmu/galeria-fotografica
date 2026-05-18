@@ -306,8 +306,7 @@ function criarVerso(foto) {
 
 function criarCartao(foto) {
   const article = document.createElement("article");
-  article.className         = `card card--${foto.orientacao}`;
-  article.dataset.id        = foto.id;
+  article.className         = `card card--${foto.orientacao}${foto.orientacao === "landscape" ? " card--wide" : ""}`;  article.dataset.id        = foto.id;
   article.style.aspectRatio = CONFIG.RATIOS[foto.orientacao];
 
   const front = document.createElement("div");
