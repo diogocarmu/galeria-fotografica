@@ -66,3 +66,9 @@ html, body {
     border-top-color: var(--loader-color);
   }
 }
+
+@media (max-width: 767px) {
+  .card--wide {
+    column-span: none;
+  }
+}
