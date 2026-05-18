@@ -4,8 +4,9 @@
  * Responsabilidades:
  *   1. Construir cartões DOM (frente + verso literário PT/EN)
  *   2. Gerir flip — um cartão aberto de cada vez
- *   3. Timer de fecho automático (10s)
- *   4. Render em batches via IntersectionObserver
+ *   3. Timer de fecho automático (10s) — pausa com tooltip aberto
+ *   4. Tooltip "via IA" com disclaimer variável por confiança
+ *   5. Render em batches via IntersectionObserver
  */
 
 "use strict";
@@ -23,6 +24,17 @@ let allFotos    = [];
 let rendered    = 0;
 let cardActivo  = null;
 let timerActivo = null;
+let timerPausado = false;
+let timerRestante = CONFIG.FLIP_AUTO_CLOSE_MS;
+let timerInicio = null;
+
+// ── Textos do disclaimer por confiança ───────────────────────
+
+const DISCLAIMER = {
+  alta:  "Texto seleccionado por IA com alta confiança de fidelidade ao original.",
+  media: "Texto seleccionado por IA. A transcrição pode diferir do original.",
+  baixa: "Texto seleccionado por IA. A transcrição pode diferir do original.",
+};
 
 // ── Gestão do flip ───────────────────────────────────────────
 
@@ -32,7 +44,10 @@ function abrirFlip(card) {
   }
 
   card.classList.add("card--flipped");
-  cardActivo = card;
+  cardActivo    = card;
+  timerPausado  = false;
+  timerRestante = CONFIG.FLIP_AUTO_CLOSE_MS;
+  timerInicio   = Date.now();
 
   const timer = card.querySelector(".card__timer");
   if (timer) {
@@ -48,12 +63,55 @@ function abrirFlip(card) {
 function fecharFlip(card) {
   card.classList.remove("card--flipped");
 
+  // Fecha tooltip se estiver aberto
+  const tooltip = card.querySelector(".card__tooltip");
+  if (tooltip) tooltip.classList.remove("card__tooltip--visible");
+
   const timer = card.querySelector(".card__timer");
   if (timer) timer.classList.remove("card__timer--running");
 
   if (cardActivo === card) cardActivo = null;
   clearTimeout(timerActivo);
-  timerActivo = null;
+  timerActivo   = null;
+  timerPausado  = false;
+  timerRestante = CONFIG.FLIP_AUTO_CLOSE_MS;
+}
+
+function pausarTimer(card) {
+  if (!timerPausado && timerInicio) {
+    timerRestante -= Date.now() - timerInicio;
+    timerPausado = true;
+    clearTimeout(timerActivo);
+    timerActivo = null;
+
+    // Para a barra CSS no estado actual
+    const timer = card.querySelector(".card__timer");
+    if (timer) {
+      const computed = getComputedStyle(timer).transform;
+      timer.style.transition = "none";
+      timer.style.transform  = computed;
+      timer.classList.remove("card__timer--running");
+    }
+  }
+}
+
+function retomarTimer(card) {
+  if (timerPausado && timerRestante > 0) {
+    timerPausado = false;
+    timerInicio  = Date.now();
+
+    // Retoma a barra CSS com o tempo restante
+    const timer = card.querySelector(".card__timer");
+    if (timer) {
+      const scaleActual = parseFloat(
+        getComputedStyle(timer).transform.match(/matrix\(([^,]+)/)?.[1] || "1"
+      );
+      timer.style.transition = `transform ${timerRestante / 1000}s linear`;
+      timer.style.transform  = "scaleX(0)";
+    }
+
+    timerActivo = setTimeout(() => fecharFlip(card), timerRestante);
+  }
 }
 
 // ── Utilitários ──────────────────────────────────────────────
@@ -81,15 +139,6 @@ function formatarData(data) {
 
 // ── Construção do bloco de texto literário ───────────────────
 
-/**
- * Cria um bloco com label de língua + texto do poema/citação.
- * Usa textContent para segurança XSS — white-space:pre-wrap
- * preserva as quebras de linha (\n) do texto literário.
- *
- * @param {string} lang   — ex: "PT", "EN" ou "ES"
- * @param {string} texto  — texto com \n para quebras de linha
- * @returns {HTMLElement}
- */
 function criarBlocoTexto(lang, texto) {
   const bloco = document.createElement("div");
   bloco.className = "card__texto-bloco";
@@ -148,19 +197,14 @@ function criarVerso(foto) {
 
   const blocos = [];
 
-  // Original — só aparece se não for PT nem EN
   if (idioma !== "pt" && idioma !== "en" && textoOR) {
     blocos.push({ lang: idioma.toUpperCase(), texto: textoOR });
   }
-
-  // PT — usa texto_pt se existir; se original for PT usa texto_editorial
   if (idioma === "pt" && textoOR) {
     blocos.push({ lang: "PT", texto: textoOR });
   } else if (idioma !== "pt" && textoPT) {
     blocos.push({ lang: "PT", texto: textoPT });
   }
-
-  // EN — usa texto_en se existir; se original for EN usa texto_editorial
   if (idioma === "en" && textoOR) {
     blocos.push({ lang: "EN", texto: textoOR });
   } else if (idioma !== "en" && textoEN) {
@@ -176,13 +220,37 @@ function criarVerso(foto) {
     textos.appendChild(criarBlocoTexto(bloco.lang, bloco.texto));
   });
 
-  // Atribuição — autor e ano
+  // Atribuição — autor, ano e "· via IA"
   if (foto.autor_texto) {
+    const attrDiv = document.createElement("div");
+    attrDiv.className = "card__atribuicao-wrap";
+
     const attr = document.createElement("p");
     attr.className = "card__atribuicao";
     const ano = foto.ano_texto ? `, ${foto.ano_texto}` : "";
     attr.innerHTML = `<em>${escapeHtml(foto.autor_texto)}</em>${escapeHtml(ano)}`;
-    textos.appendChild(attr);
+
+    // "· via IA" — só se houver info de confiança
+    const confianca = (foto.confianca_texto || "media").toLowerCase();
+    const disclaimer = DISCLAIMER[confianca] || DISCLAIMER.media;
+
+    const viaIA = document.createElement("span");
+    viaIA.className   = "card__via-ia";
+    viaIA.textContent = " · via IA";
+    viaIA.setAttribute("role", "button");
+    viaIA.setAttribute("aria-label", "Informação sobre a selecção por IA");
+    viaIA.setAttribute("tabindex", "0");
+
+    // Tooltip
+    const tooltip = document.createElement("div");
+    tooltip.className   = "card__tooltip";
+    tooltip.textContent = disclaimer;
+    tooltip.setAttribute("role", "tooltip");
+
+    attrDiv.appendChild(attr);
+    attr.appendChild(viaIA);
+    attrDiv.appendChild(tooltip);
+    textos.appendChild(attrDiv);
   }
 
   // Metadados — câmara, data, GPS
@@ -217,7 +285,7 @@ function criarVerso(foto) {
     meta.appendChild(itemGps);
   }
 
-  // Timer — filho directo do .card__face--back
+  // Timer
   const timerBar = document.createElement("div");
   timerBar.className = "card__timer";
 
@@ -259,14 +327,49 @@ function criarCartao(foto) {
   inner.appendChild(back);
   article.appendChild(inner);
 
+  // ── Listeners ────────────────────────────────────────────
+
   article.addEventListener("click", (e) => {
+    // Botão fechar
     if (e.target.closest(".card__close")) {
       e.stopPropagation();
       fecharFlip(article);
       return;
     }
+
+    // "via IA" — toggle tooltip + pausa/retoma timer
+    const viaIA = e.target.closest(".card__via-ia");
+    if (viaIA) {
+      e.stopPropagation();
+      const tooltip = article.querySelector(".card__tooltip");
+      const isOpen  = tooltip?.classList.contains("card__tooltip--visible");
+
+      // Fecha todos os outros tooltips
+      document.querySelectorAll(".card__tooltip--visible").forEach(t => {
+        t.classList.remove("card__tooltip--visible");
+      });
+
+      if (!isOpen) {
+        tooltip?.classList.add("card__tooltip--visible");
+        pausarTimer(article);
+      } else {
+        retomarTimer(article);
+      }
+      return;
+    }
+
+    // Clique num link (GPS) — não dispara flip
     if (e.target.closest("a")) return;
 
+    // Fecha tooltip se aberto
+    const tooltip = article.querySelector(".card__tooltip--visible");
+    if (tooltip) {
+      tooltip.classList.remove("card__tooltip--visible");
+      retomarTimer(article);
+      return;
+    }
+
+    // Flip
     article.classList.contains("card--flipped")
       ? fecharFlip(article)
       : abrirFlip(article);

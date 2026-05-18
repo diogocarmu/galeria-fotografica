@@ -366,3 +366,56 @@
   .card__timer--running { transition: none; }
   #loader { animation: none; }
 }
+
+/* ═══════════════════════════════════════════
+   VIA IA — Atribuição e tooltip
+   ═══════════════════════════════════════════ */
+
+.card__atribuicao-wrap {
+  position: relative;
+  margin-top: auto;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--color-border);
+}
+
+/* "· via IA" — mesmo peso visual que o ano */
+.card__via-ia {
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  font-weight: 300;
+  color: var(--color-text-faint);
+  letter-spacing: 0.05em;
+  border-bottom: 1px dotted var(--color-text-faint);
+  cursor: pointer;
+  user-select: none;
+  transition: opacity 0.2s;
+}
+
+.card__via-ia:hover {
+  opacity: 0.7;
+}
+
+/* Tooltip */
+.card__tooltip {
+  display: none;
+  position: absolute;
+  bottom: calc(100% + 0.5rem);
+  left: 0;
+  right: 0;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 2px;
+  padding: 0.6rem 0.75rem;
+  font-family: var(--font-body);
+  font-size: 0.65rem;
+  font-weight: 300;
+  color: var(--color-text-muted);
+  line-height: 1.5;
+  letter-spacing: 0.03em;
+  z-index: 20;
+  pointer-events: none;
+}
+
+.card__tooltip--visible {
+  display: block;
+}
