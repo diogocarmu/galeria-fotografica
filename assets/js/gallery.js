@@ -86,7 +86,7 @@ function formatarData(data) {
  * Usa textContent para segurança XSS — white-space:pre-wrap
  * preserva as quebras de linha (\n) do texto literário.
  *
- * @param {string} lang   — ex: "PT" ou "EN"
+ * @param {string} lang   — ex: "PT", "EN" ou "ES"
  * @param {string} texto  — texto com \n para quebras de linha
  * @returns {HTMLElement}
  */
@@ -100,7 +100,7 @@ function criarBlocoTexto(lang, texto) {
 
   const p = document.createElement("p");
   p.className   = "card__texto";
-  p.textContent = texto || ""; // textContent respeita \n com white-space:pre-wrap
+  p.textContent = texto || "";
 
   bloco.appendChild(label);
   bloco.appendChild(p);
@@ -137,41 +137,34 @@ function criarVerso(foto) {
   titulo.className   = "card__titulo";
   titulo.textContent = foto.titulo || "";
 
-  // Textos literários PT + EN
+  // Textos literários — ordem: Original → PT → EN
   const textos = document.createElement("div");
   textos.className = "card__textos";
 
-  const idioma = (foto.idioma_original || "").toLowerCase();
-
-  // Determina ordem e conteúdo PT/EN
-  // Regra: mostra sempre PT e EN, nunca o original separado
-  // Se original é PT → texto_pt é o original, texto_en é tradução
-  // Se original é EN → texto_en é o original, texto_pt é tradução
-  // Se outro idioma → texto_pt e texto_en são ambos traduções
   const idioma  = (foto.idioma_original || "").toLowerCase();
   const textoOR = foto.texto_editorial || "";
   const textoPT = foto.texto_pt || "";
   const textoEN = foto.texto_en || "";
 
-  // Ordem: Original → PT → EN
-  // PT original: PT → EN (sem repetir)
-  // EN original: EN → PT (sem repetir)
-  // Outro: Original → PT → EN
-
   const blocos = [];
 
+  // Original — só aparece se não for PT nem EN
   if (idioma !== "pt" && idioma !== "en" && textoOR) {
     blocos.push({ lang: idioma.toUpperCase(), texto: textoOR });
   }
-  if (idioma !== "pt" && textoPT) {
-    blocos.push({ lang: "PT", texto: textoPT });
-  } else if (idioma === "pt" && textoOR) {
+
+  // PT — usa texto_pt se existir; se original for PT usa texto_editorial
+  if (idioma === "pt" && textoOR) {
     blocos.push({ lang: "PT", texto: textoOR });
+  } else if (idioma !== "pt" && textoPT) {
+    blocos.push({ lang: "PT", texto: textoPT });
   }
-  if (idioma !== "en" && textoEN) {
-    blocos.push({ lang: "EN", texto: textoEN });
-  } else if (idioma === "en" && textoOR) {
+
+  // EN — usa texto_en se existir; se original for EN usa texto_editorial
+  if (idioma === "en" && textoOR) {
     blocos.push({ lang: "EN", texto: textoOR });
+  } else if (idioma !== "en" && textoEN) {
+    blocos.push({ lang: "EN", texto: textoEN });
   }
 
   blocos.forEach((bloco, i) => {
@@ -236,7 +229,7 @@ function criarVerso(foto) {
 
   back.appendChild(thumbDiv);
   back.appendChild(content);
-  back.appendChild(timerBar);  // fora do content — não sobe com scroll
+  back.appendChild(timerBar);
 
   return back;
 }
