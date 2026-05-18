@@ -100,7 +100,7 @@ function criarBlocoTexto(lang, texto) {
 
   const p = document.createElement("p");
   p.className   = "card__texto";
-  p.textContent = texto || "";
+  p.textContent = (texto || "").replace(/\\n/g, "\n");
 
   bloco.appendChild(label);
   bloco.appendChild(p);
