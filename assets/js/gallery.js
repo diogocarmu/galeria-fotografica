@@ -148,22 +148,40 @@ function criarVerso(foto) {
   // Se original é PT → texto_pt é o original, texto_en é tradução
   // Se original é EN → texto_en é o original, texto_pt é tradução
   // Se outro idioma → texto_pt e texto_en são ambos traduções
-  const textoPT = foto.texto_pt || foto.texto_editorial || "";
+  const idioma  = (foto.idioma_original || "").toLowerCase();
+  const textoOR = foto.texto_editorial || "";
+  const textoPT = foto.texto_pt || "";
   const textoEN = foto.texto_en || "";
 
-  if (textoPT) {
-    textos.appendChild(criarBlocoTexto("PT", textoPT));
+  // Ordem: Original → PT → EN
+  // PT original: PT → EN (sem repetir)
+  // EN original: EN → PT (sem repetir)
+  // Outro: Original → PT → EN
+
+  const blocos = [];
+
+  if (idioma !== "pt" && idioma !== "en" && textoOR) {
+    blocos.push({ lang: idioma.toUpperCase(), texto: textoOR });
+  }
+  if (idioma !== "pt" && textoPT) {
+    blocos.push({ lang: "PT", texto: textoPT });
+  } else if (idioma === "pt" && textoOR) {
+    blocos.push({ lang: "PT", texto: textoOR });
+  }
+  if (idioma !== "en" && textoEN) {
+    blocos.push({ lang: "EN", texto: textoEN });
+  } else if (idioma === "en" && textoOR) {
+    blocos.push({ lang: "EN", texto: textoOR });
   }
 
-  if (textoEN && textoPT) {
-    const sep = document.createElement("div");
-    sep.className = "card__texto-sep";
-    textos.appendChild(sep);
-  }
-
-  if (textoEN) {
-    textos.appendChild(criarBlocoTexto("EN", textoEN));
-  }
+  blocos.forEach((bloco, i) => {
+    if (i > 0) {
+      const sep = document.createElement("div");
+      sep.className = "card__texto-sep";
+      textos.appendChild(sep);
+    }
+    textos.appendChild(criarBlocoTexto(bloco.lang, bloco.texto));
+  });
 
   // Atribuição — autor e ano
   if (foto.autor_texto) {
