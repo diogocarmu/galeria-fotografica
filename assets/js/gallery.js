@@ -20,13 +20,13 @@ const errorEl     = document.getElementById("error-msg");
 
 // ── Estado interno ───────────────────────────────────────────
 
-let allFotos    = [];
-let rendered    = 0;
-let cardActivo  = null;
-let timerActivo = null;
+let allFotos     = [];
+let rendered     = 0;
+let cardActivo   = null;
+let timerActivo  = null;
 let timerPausado = false;
 let timerRestante = CONFIG.FLIP_AUTO_CLOSE_MS;
-let timerInicio = null;
+let timerInicio  = null;
 
 // ── Textos do disclaimer por confiança ───────────────────────
 
@@ -63,7 +63,6 @@ function abrirFlip(card) {
 function fecharFlip(card) {
   card.classList.remove("card--flipped");
 
-  // Fecha tooltip se estiver aberto
   const tooltip = card.querySelector(".card__tooltip");
   if (tooltip) tooltip.classList.remove("card__tooltip--visible");
 
@@ -84,7 +83,6 @@ function pausarTimer(card) {
     clearTimeout(timerActivo);
     timerActivo = null;
 
-    // Para a barra CSS no estado actual
     const timer = card.querySelector(".card__timer");
     if (timer) {
       const computed = getComputedStyle(timer).transform;
@@ -100,12 +98,8 @@ function retomarTimer(card) {
     timerPausado = false;
     timerInicio  = Date.now();
 
-    // Retoma a barra CSS com o tempo restante
     const timer = card.querySelector(".card__timer");
     if (timer) {
-      const scaleActual = parseFloat(
-        getComputedStyle(timer).transform.match(/matrix\(([^,]+)/)?.[1] || "1"
-      );
       timer.style.transition = `transform ${timerRestante / 1000}s linear`;
       timer.style.transform  = "scaleX(0)";
     }
@@ -230,8 +224,7 @@ function criarVerso(foto) {
     const ano = foto.ano_texto ? `, ${foto.ano_texto}` : "";
     attr.innerHTML = `<em>${escapeHtml(foto.autor_texto)}</em>${escapeHtml(ano)}`;
 
-    // "· via IA" — só se houver info de confiança
-    const confianca = (foto.confianca_texto || "media").toLowerCase();
+    const confianca  = (foto.confianca_texto || "media").toLowerCase();
     const disclaimer = DISCLAIMER[confianca] || DISCLAIMER.media;
 
     const viaIA = document.createElement("span");
@@ -241,7 +234,6 @@ function criarVerso(foto) {
     viaIA.setAttribute("aria-label", "Informação sobre a selecção por IA");
     viaIA.setAttribute("tabindex", "0");
 
-    // Tooltip
     const tooltip = document.createElement("div");
     tooltip.className   = "card__tooltip";
     tooltip.textContent = disclaimer;
@@ -285,11 +277,9 @@ function criarVerso(foto) {
     meta.appendChild(itemGps);
   }
 
-  // Timer
   const timerBar = document.createElement("div");
   timerBar.className = "card__timer";
 
-  // Montagem
   content.appendChild(btnFechar);
   content.appendChild(titulo);
   content.appendChild(textos);
@@ -306,7 +296,8 @@ function criarVerso(foto) {
 
 function criarCartao(foto) {
   const article = document.createElement("article");
-  article.className         = `card card--${foto.orientacao}${foto.orientacao === "landscape" ? " card--wide" : ""}`;  article.dataset.id        = foto.id;
+  article.className         = `card card--${foto.orientacao}`;  // sem card--wide
+  article.dataset.id        = foto.id;
   article.style.aspectRatio = CONFIG.RATIOS[foto.orientacao];
 
   const front = document.createElement("div");
@@ -326,24 +317,19 @@ function criarCartao(foto) {
   inner.appendChild(back);
   article.appendChild(inner);
 
-  // ── Listeners ────────────────────────────────────────────
-
   article.addEventListener("click", (e) => {
-    // Botão fechar
     if (e.target.closest(".card__close")) {
       e.stopPropagation();
       fecharFlip(article);
       return;
     }
 
-    // "via IA" — toggle tooltip + pausa/retoma timer
     const viaIA = e.target.closest(".card__via-ia");
     if (viaIA) {
       e.stopPropagation();
       const tooltip = article.querySelector(".card__tooltip");
       const isOpen  = tooltip?.classList.contains("card__tooltip--visible");
 
-      // Fecha todos os outros tooltips
       document.querySelectorAll(".card__tooltip--visible").forEach(t => {
         t.classList.remove("card__tooltip--visible");
       });
@@ -357,10 +343,8 @@ function criarCartao(foto) {
       return;
     }
 
-    // Clique num link (GPS) — não dispara flip
     if (e.target.closest("a")) return;
 
-    // Fecha tooltip se aberto
     const tooltip = article.querySelector(".card__tooltip--visible");
     if (tooltip) {
       tooltip.classList.remove("card__tooltip--visible");
@@ -368,7 +352,6 @@ function criarCartao(foto) {
       return;
     }
 
-    // Flip
     article.classList.contains("card--flipped")
       ? fecharFlip(article)
       : abrirFlip(article);

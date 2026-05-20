@@ -420,12 +420,5 @@
   display: block;
 }
 
-/* ═══════════════════════════════════════════
-   LANDSCAPE — 2 colunas em desktop
-   ═══════════════════════════════════════════ */
 
-@media (min-width: 768px) {
-  .card--wide {
-    column-span: all;
-  }
 }
