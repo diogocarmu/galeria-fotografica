@@ -111,6 +111,7 @@ let modalEl = null;
 
 // Elementos internos do modal — preenchidos em construirModal()
 let elFotoWrap      = null;
+let elFotoInner     = null;
 let elFotoImg       = null;
 let elTituloOverlay = null;
 let elExifOverlay   = null;
@@ -179,6 +180,10 @@ function construirModal() {
   elFotoWrap = document.createElement("div");
   elFotoWrap.className = "modal__foto-wrap";
 
+  // Wrapper interno que abraça a foto real — overlays ancorados aqui
+  elFotoInner = document.createElement("div");
+  elFotoInner.className = "modal__foto-inner";
+
   elFotoImg = document.createElement("img");
   elFotoImg.className = "modal__foto";
   elFotoImg.alt       = "";
@@ -191,9 +196,10 @@ function construirModal() {
   elExifOverlay = document.createElement("div");
   elExifOverlay.className = "modal__exif-overlay";
 
-  elFotoWrap.appendChild(elFotoImg);
-  elFotoWrap.appendChild(elTituloOverlay);
-  elFotoWrap.appendChild(elExifOverlay);
+  elFotoInner.appendChild(elFotoImg);
+  elFotoInner.appendChild(elTituloOverlay);
+  elFotoInner.appendChild(elExifOverlay);
+  elFotoWrap.appendChild(elFotoInner);
 
   // Área do texto (modo ◫)
   elTextoWrap = document.createElement("div");
@@ -375,6 +381,8 @@ function definirModo(modo) {
       elFotoWrap.style.display      = "";
       elFotoWrap.classList.remove("modal__foto-wrap--crop");
       elFotoWrap.classList.add("modal__foto-wrap--full");
+      // Modo ▢: usa elFotoInner para ancorar overlays à foto real
+      elFotoInner.style.display     = "";
       elTituloOverlay.style.display = "";
       elExifOverlay.style.display   = "";
       elTextoWrap.style.display     = "none";
@@ -400,6 +408,8 @@ function definirModo(modo) {
       elFotoWrap.style.display      = "";
       elFotoWrap.classList.remove("modal__foto-wrap--full");
       elFotoWrap.classList.add("modal__foto-wrap--crop");
+      // Modo ◫: foto vai directo ao wrap (sem inner), overlays escondidos
+      elFotoInner.style.display     = "none";
       elTituloOverlay.style.display = "none";
       elExifOverlay.style.display   = "none";
       elTextoWrap.style.display     = "";
@@ -567,6 +577,7 @@ function criarCartao(foto) {
   const article = document.createElement("article");
   article.className  = `card card--${foto.orientacao}`;
   article.dataset.id = foto.id;
+  // aspectRatio e height controlados em responsive.css
 
   const face = document.createElement("div");
   face.className = "card__face card__face--front";
