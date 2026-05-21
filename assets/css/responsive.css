@@ -1,63 +1,174 @@
 /* ═══════════════════════════════════════════
    RESPONSIVE — Galeria Fotográfica
    ═══════════════════════════════════════════
-   Mobile-first. Invariante #11: coluna única
-   em mobile, sem scroll horizontal.
+   Mobile-first. CSS Grid com grid-auto-flow: dense.
+   Landscape ocupa 2 colunas a partir de ≥480px.
    ═══════════════════════════════════════════ */
 
-/* ── Mobile (default) — 1 coluna ─────────── */
-/* Definido via :root em gallery.css mas
-   explicitamos aqui para clareza */
-#gallery {
-  --gallery-cols: 1;
-}
-
-/* ── Tablet pequeno — 2 colunas (≥480px) ─── */
-@media (min-width: 480px) {
-  #gallery {
-    --gallery-cols: 2;
-  }
-}
-
-/* ── Tablet — 3 colunas (≥768px) ─────────── */
-@media (min-width: 768px) {
-  #gallery {
-    --gallery-cols: 3;
-  }
-}
-
-/* ── Desktop — 4 colunas (≥1200px) ──────── */
-@media (min-width: 1200px) {
-  #gallery {
-    --gallery-cols: 4;
-  }
-}
-
-/* ── Desktop largo — 5 colunas (≥1600px) ── */
-@media (min-width: 1600px) {
-  #gallery {
-    --gallery-cols: 5;
-  }
-}
-
-/* ═══════════════════════════════════════════
-   PREVENÇÃO DE SCROLL HORIZONTAL
-   Cobre todos os breakpoints.
-   ═══════════════════════════════════════════ */
+/* ── Prevenção de scroll horizontal ─────── */
 
 html, body {
   max-width: 100%;
   overflow-x: hidden;
 }
 
-/* ═══════════════════════════════════════════
+/* ══════════════════════════════════════════
+   GRELHA — mobile-first
+   ══════════════════════════════════════════ */
+
+#gallery {
+  display: grid;
+  grid-template-columns: repeat(var(--gallery-cols, 1), 1fr);
+  grid-auto-flow: dense;
+  gap: var(--gallery-gap, 1px);
+  width: 100%;
+  padding: 0;
+  /* Remove propriedades de CSS Columns anteriores */
+  columns: unset;
+  column-gap: unset;
+}
+
+/* ── Mobile (default) — 1 coluna ─────────── */
+
+#gallery {
+  --gallery-cols: 1;
+}
+
+/* Em 1 coluna, landscape não faz span (não há espaço) */
+.card--landscape {
+  grid-column: span 1;
+}
+
+/* ── Tablet pequeno — 2 colunas (≥480px) ─── */
+
+@media (min-width: 480px) {
+  #gallery {
+    --gallery-cols: 2;
+  }
+
+  /* Landscape ocupa as 2 colunas disponíveis */
+  .card--landscape {
+    grid-column: span 2;
+  }
+}
+
+/* ── Tablet — 3 colunas (≥768px) ─────────── */
+
+@media (min-width: 768px) {
+  #gallery {
+    --gallery-cols: 3;
+  }
+
+  /* Landscape: span 2 de 3 — deixa 1 coluna para portrait/square ao lado */
+  .card--landscape {
+    grid-column: span 2;
+  }
+}
+
+/* ── Desktop — 4 colunas (≥1200px) ──────── */
+
+@media (min-width: 1200px) {
+  #gallery {
+    --gallery-cols: 4;
+  }
+
+  .card--landscape {
+    grid-column: span 2;
+  }
+}
+
+/* ── Desktop largo — 5 colunas (≥1600px) ── */
+
+@media (min-width: 1600px) {
+  #gallery {
+    --gallery-cols: 5;
+  }
+
+  .card--landscape {
+    grid-column: span 2;
+  }
+}
+
+/* ══════════════════════════════════════════
+   MODAL — responsividade
+   ══════════════════════════════════════════ */
+
+/* Desktop: foto crop à esquerda (50%), texto à direita */
+@media (min-width: 768px) {
+  .modal__corpo--com-foto {
+    flex-direction: row;
+  }
+
+  .modal__foto-wrap {
+    width: 50%;
+    height: 100%;
+  }
+
+  .modal__texto-wrap {
+    width: 50%;
+    height: 100%;
+    overflow-y: auto;
+  }
+
+  /* Modo T (só texto): colunas lado a lado */
+  .modal__texto-colunas {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+
+  .modal__coluna--original {
+    flex: 1.4;  /* original ligeiramente maior */
+  }
+
+  .modal__coluna--secundaria {
+    flex: 1;
+  }
+}
+
+/* Mobile: foto crop em cima (45vh), texto em baixo */
+@media (max-width: 767px) {
+  .modal__corpo--com-foto {
+    flex-direction: column;
+  }
+
+  .modal__foto-wrap {
+    width: 100%;
+    height: 45vh;
+    flex-shrink: 0;
+  }
+
+  .modal__texto-wrap {
+    width: 100%;
+    flex: 1;
+    overflow-y: auto;
+  }
+
+  /* Modo T (só texto): colunas empilhadas */
+  .modal__texto-colunas {
+    flex-direction: column;
+  }
+
+  /* Barra de modos em baixo em mobile */
+  .modal__barra {
+    top: auto;
+    bottom: 0;
+    border-top: 1px solid var(--color-border);
+    border-bottom: none;
+  }
+
+  /* Ajuste de padding do corpo para não ficar sob a barra mobile */
+  .modal__corpo {
+    padding-bottom: 3rem;
+    padding-top: 0;
+  }
+}
+
+/* ══════════════════════════════════════════
    PREFERÊNCIA DE MOVIMENTO REDUZIDO
-   Respeita utilizadores com sensibilidade
-   a animações (acessibilidade).
-   ═══════════════════════════════════════════ */
+   ══════════════════════════════════════════ */
 
 @media (prefers-reduced-motion: reduce) {
-  .card__inner {
+  .modal {
     transition: none;
   }
 
@@ -65,7 +176,4 @@ html, body {
     animation: none;
     border-top-color: var(--loader-color);
   }
-}
-
-
 }
