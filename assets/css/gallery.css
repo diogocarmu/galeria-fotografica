@@ -22,13 +22,11 @@
   --gallery-gap:  1px;
   --gallery-cols: 4;
 
-  /* Flip */
-  --flip-duration: 0.6s;
-  --flip-easing:   cubic-bezier(0.4, 0, 0.2, 1);
-
-  /* Verso */
-  --back-bg:      rgba(8, 8, 8, 0.97);
-  --back-padding: clamp(1rem, 3vw, 1.75rem);
+  /* Modal */
+  --modal-bg:          #0d0d0d;
+  --modal-barra-h:     2.75rem;
+  --modal-padding:     clamp(1.5rem, 4vw, 3rem);
+  --modal-transition:  0.28s cubic-bezier(0.4, 0, 0.2, 1);
 
   /* Loader */
   --loader-size:  2rem;
@@ -36,129 +34,285 @@
 }
 
 /* ═══════════════════════════════════════════
-   GALERIA — CSS COLUMNS
+   GALERIA — CSS Grid (definido em responsive.css)
+   Os tokens de grid vivem aqui; a declaração
+   display:grid está em responsive.css.
    ═══════════════════════════════════════════ */
 
-#gallery {
-  columns: var(--gallery-cols);
-  column-gap: var(--gallery-gap);
-  width: 100%;
-  padding: 0;
-}
-
-/* ═══════════════════════════════════════════
-   CARTÃO
-   ═══════════════════════════════════════════ */
-
-.card {
-  break-inside: avoid;
-  display: block;
-  position: relative;
-  width: 100%;
-  margin-bottom: var(--gallery-gap);
-  perspective: 1200px;
-  cursor: pointer;
-  overflow: hidden;
-}
-
+/* Cartões: altura proporcional ao aspect-ratio */
 .card--landscape { aspect-ratio: 4 / 3; }
 .card--portrait  { aspect-ratio: 3 / 4; }
 .card--square    { aspect-ratio: 1 / 1; }
 
-/* ── Inner ───────────────────────────────────────────────── */
+/* ═══════════════════════════════════════════
+   CARTÃO — frente (grelha)
+   ═══════════════════════════════════════════ */
 
-.card__inner {
+.card {
+  display: block;
   position: relative;
   width: 100%;
-  height: 100%;
-  transform-style: preserve-3d;
-  transition: transform var(--flip-duration) var(--flip-easing);
-  will-change: transform;
+  cursor: pointer;
+  overflow: hidden;
+  background: var(--color-surface);
 }
-
-.card--flipped .card__inner {
-  transform: rotateY(180deg);
-}
-
-/* ── Faces ───────────────────────────────────────────────── */
-
-.card__face {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
-}
-
-.card__face--front { z-index: 1; }
 
 .card__face--front img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
-  transition: opacity 0.4s ease, transform 0.6s ease;
+  transition: opacity 0.4s ease, transform 0.5s ease;
 }
 
 .card:hover .card__face--front img {
   transform: scale(1.02);
 }
 
-/* ── Verso ───────────────────────────────────────────────── */
+/* ═══════════════════════════════════════════
+   MODAL — estrutura
+   ═══════════════════════════════════════════ */
 
-.card__face--back {
-  transform: rotateY(180deg);
-  background-color: var(--back-bg);
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: var(--modal-bg);
   display: flex;
   flex-direction: column;
-  overflow: hidden;
-  position: relative;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--modal-transition);
 }
 
-/* Thumbnail */
-.card__back-thumb {
+.modal--aberto {
+  opacity: 1;
+  pointer-events: all;
+}
+
+/* ── Barra superior de controlos ─────────── */
+
+.modal__barra {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--modal-barra-h);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1rem;
+  z-index: 10;
+  border-bottom: 1px solid var(--color-border);
+  background: rgba(13, 13, 13, 0.92);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+/* Grupo de modos — lado esquerdo */
+.modal__modos {
+  display: flex;
+  align-items: center;
+  gap: 0.125rem;
+}
+
+.modal__modo-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-text-faint);
+  font-size: 1.1rem;
+  line-height: 1;
+  padding: 0.35rem 0.55rem;
+  border-radius: 2px;
+  transition: color 0.18s, background 0.18s;
+  letter-spacing: 0;
+  user-select: none;
+}
+
+.modal__modo-btn:hover {
+  color: var(--color-text-muted);
+  background: rgba(255,255,255,0.04);
+}
+
+.modal__modo-btn--activo {
+  color: var(--color-accent);
+  background: rgba(200, 169, 110, 0.08);
+}
+
+/* Selector de idioma — centro ou lado direito da barra */
+.modal__idiomas {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.modal__idioma-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: var(--font-body);
+  font-size: 0.65rem;
+  font-weight: 400;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-text-faint);
+  padding: 0.2rem 0;
+  border-bottom: 1px solid transparent;
+  transition: color 0.18s, border-color 0.18s;
+  user-select: none;
+}
+
+.modal__idioma-btn:hover {
+  color: var(--color-text-muted);
+}
+
+.modal__idioma-btn--activo {
+  color: var(--color-text);
+  border-bottom-color: var(--color-accent);
+}
+
+/* Separador entre idiomas */
+.modal__idioma-sep {
+  font-family: var(--font-body);
+  font-size: 0.55rem;
+  color: var(--color-border);
+  user-select: none;
+  pointer-events: none;
+}
+
+/* Botão fechar — lado direito */
+.modal__fechar {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-text-faint);
+  font-size: 1rem;
+  line-height: 1;
+  padding: 0.35rem 0.4rem;
+  border-radius: 2px;
+  transition: color 0.18s;
+  margin-left: auto;
+  user-select: none;
+}
+
+.modal__fechar:hover {
+  color: var(--color-text);
+}
+
+/* ── Corpo do modal ───────────────────────── */
+
+.modal__corpo {
+  flex: 1;
+  display: flex;
+  margin-top: var(--modal-barra-h);
+  overflow: hidden;
+}
+
+/* Estado com foto (modos ▢ e ◫) */
+.modal__corpo--com-foto {
+  /* flex-direction definido em responsive.css */
+}
+
+/* Estado só texto (modo T) */
+.modal__corpo--so-texto {
+  align-items: flex-start;
+  overflow-y: auto;
+  padding: var(--modal-padding);
+}
+
+/* ── Área da foto (modos ▢ e ◫) ──────────── */
+
+.modal__foto-wrap {
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: #000;
+}
+
+/* Modo ▢: foto a ecrã inteiro */
+.modal__foto-wrap--full {
   width: 100%;
-  flex: 0 0 28%;
-  overflow: hidden;
-  position: relative;
+  height: 100%;
 }
 
-.card__back-thumb img {
+/* Modo ◫: foto cropped (dimensões em responsive.css) */
+.modal__foto-wrap--crop {
+  /* dimensões definidas em responsive.css */
+}
+
+.modal__foto {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
-  filter: brightness(0.6);
 }
 
-.card__back-thumb::after {
-  content: "";
+/* Modo ▢: título sobreimposto */
+.modal__titulo-overlay {
   position: absolute;
   bottom: 0;
-  left: var(--back-padding);
-  right: var(--back-padding);
-  height: 1px;
-  background: linear-gradient(90deg, transparent, var(--color-accent), transparent);
+  left: 0;
+  right: 0;
+  padding: 3rem var(--modal-padding) 1.25rem;
+  background: linear-gradient(to top, rgba(0,0,0,0.72) 0%, transparent 100%);
+  font-family: var(--font-display);
+  font-size: clamp(1rem, 2.5vw, 1.5rem);
+  font-weight: 300;
+  font-style: italic;
+  color: var(--color-text);
+  letter-spacing: 0.02em;
+  line-height: 1.3;
+  pointer-events: none;
 }
 
-/* Conteúdo */
-.card__back-content {
-  flex: 1;
+/* EXIF no modo ▢ — canto inferior direito, sobre a foto */
+.modal__exif-overlay {
+  position: absolute;
+  bottom: 1rem;
+  right: var(--modal-padding);
+  display: flex;
+  gap: 1rem;
+  font-family: var(--font-body);
+  font-size: 0.6rem;
+  font-weight: 300;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(232, 232, 232, 0.45);
+  pointer-events: none;
+}
+
+.modal__exif-overlay a {
+  color: rgba(200, 169, 110, 0.55);
+  pointer-events: all;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.modal__exif-overlay a:hover {
+  color: var(--color-accent);
+}
+
+/* ── Área do texto (modo ◫) ──────────────── */
+
+.modal__texto-wrap {
   display: flex;
   flex-direction: column;
-  padding: var(--back-padding);
-  gap: 0.75rem;
-  overflow-y: auto;
+  padding: var(--modal-padding);
+  gap: 1.5rem;
+  /* overflow-y e dimensões em responsive.css */
   scrollbar-width: none;
 }
 
-.card__back-content::-webkit-scrollbar { display: none; }
+.modal__texto-wrap::-webkit-scrollbar { display: none; }
 
-/* Título */
-.card__titulo {
+/* Título no modo ◫ */
+.modal__titulo {
   font-family: var(--font-display);
-  font-size: clamp(1rem, 2.2vw, 1.3rem);
+  font-size: clamp(1.1rem, 2.5vw, 1.6rem);
   font-weight: 400;
   font-style: italic;
   color: var(--color-text);
@@ -166,135 +320,164 @@
   letter-spacing: 0.01em;
 }
 
-/* Bloco de texto literário — duas versões PT/EN */
-.card__textos {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-  flex: 1;
-}
-
-.card__texto-bloco {
-  display: flex;
-  flex-direction: column;
-  gap: 0.2rem;
-}
-
-.card__texto-lang {
-  font-family: var(--font-body);
-  font-size: 0.6rem;
-  font-weight: 400;
-  color: var(--color-accent);
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-}
-
-.card__texto {
+/* Texto literário único (modo ◫) */
+.modal__texto {
   font-family: var(--font-display);
-  font-size: clamp(0.85rem, 1.6vw, 1rem);
+  font-size: clamp(1rem, 2vw, 1.25rem);
   font-weight: 300;
   font-style: italic;
   color: var(--color-text-muted);
-  line-height: 1.7;
-  white-space: pre-wrap;   /* preserva quebras de linha do poema */
+  line-height: 1.8;
+  white-space: pre-wrap;
+  flex: 1;
 }
 
-/* Separador entre PT e EN */
-.card__texto-sep {
-  width: 2rem;
-  height: 1px;
-  background: var(--color-border);
-  margin: 0.1rem 0;
+/* Bloco de atribuição + via IA */
+.modal__atribuicao-wrap {
+  border-top: 1px solid var(--color-border);
+  padding-top: 0.75rem;
+  position: relative;
 }
 
-/* Atribuição — autor e ano */
-.card__atribuicao {
+.modal__atribuicao {
   font-family: var(--font-body);
   font-size: 0.72rem;
   font-weight: 300;
   color: var(--color-text-faint);
   letter-spacing: 0.05em;
-  margin-top: auto;
-  padding-top: 0.5rem;
-  border-top: 1px solid var(--color-border);
 }
 
-.card__atribuicao em {
+.modal__atribuicao em {
   font-style: normal;
   color: var(--color-text-muted);
 }
 
-/* Metadados — câmara, data, GPS */
-.card__meta {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
+.modal__via-ia {
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  font-weight: 300;
+  color: var(--color-text-faint);
+  letter-spacing: 0.05em;
+  border-bottom: 1px dotted var(--color-text-faint);
+  cursor: pointer;
+  user-select: none;
+  transition: opacity 0.2s;
 }
 
-.card__meta-item {
+.modal__via-ia:hover { opacity: 0.7; }
+
+.modal__tooltip {
+  display: none;
+  position: absolute;
+  bottom: calc(100% + 0.5rem);
+  left: 0;
+  right: 0;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 2px;
+  padding: 0.6rem 0.75rem;
   font-family: var(--font-body);
   font-size: 0.65rem;
   font-weight: 300;
-  color: var(--color-text-faint);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
+  color: var(--color-text-muted);
+  line-height: 1.5;
+  letter-spacing: 0.03em;
+  z-index: 20;
+  pointer-events: none;
 }
 
-.card__meta-item a {
+.modal__tooltip--visible { display: block; }
+
+/* EXIF em linha no modo ◫ e T */
+.modal__exif-linha {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 1.25rem;
+  font-family: var(--font-body);
+  font-size: 0.6rem;
+  font-weight: 300;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-text-faint);
+  border-top: 1px solid var(--color-border);
+  padding-top: 0.75rem;
+  margin-top: auto;
+}
+
+.modal__exif-linha a {
   color: var(--color-accent);
   text-decoration: none;
   transition: opacity 0.2s;
 }
 
-.card__meta-item a:hover { opacity: 0.7; }
+.modal__exif-linha a:hover { opacity: 0.7; }
 
-/* Botão fechar */
-.card__close {
-  position: absolute;
-  top: 0.6rem;
-  right: 0.6rem;
-  width: 1.5rem;
-  height: 1.5rem;
+/* ── Modo T — só texto, colunas ──────────── */
+
+.modal__texto-colunas {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(255,255,255,0.06);
-  border: 1px solid rgba(255,255,255,0.1);
-  border-radius: 50%;
-  cursor: pointer;
-  color: var(--color-text-muted);
-  font-size: 0.7rem;
-  line-height: 1;
-  transition: background 0.2s, color 0.2s;
-  z-index: 10;
-  flex-shrink: 0;
-}
-
-.card__close:hover {
-  background: rgba(255,255,255,0.12);
-  color: var(--color-text);
-}
-
-/* Timer — barra dourada no fundo do .card__face--back */
-.card__timer {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  height: 2px;
+  gap: clamp(2rem, 5vw, 4rem);
   width: 100%;
-  background: var(--color-accent);
-  transform-origin: left;
-  transform: scaleX(1);
-  transition: none;
-  z-index: 5;
+  /* flex-direction em responsive.css */
 }
 
-.card__timer--running {
-  transform: scaleX(0);
-  transition: transform 10s linear;
+.modal__coluna {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  min-width: 0;
+}
+
+.modal__coluna-lang {
+  font-family: var(--font-body);
+  font-size: 0.6rem;
+  font-weight: 400;
+  color: var(--color-accent);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+/* Original: tipografia maior */
+.modal__coluna--original .modal__coluna-texto {
+  font-family: var(--font-display);
+  font-size: clamp(1.1rem, 2.2vw, 1.5rem);
+  font-weight: 300;
+  font-style: italic;
+  color: var(--color-text);
+  line-height: 1.8;
+  white-space: pre-wrap;
+}
+
+/* Secundárias: tipografia menor */
+.modal__coluna--secundaria .modal__coluna-texto {
+  font-family: var(--font-display);
+  font-size: clamp(0.9rem, 1.6vw, 1.1rem);
+  font-weight: 300;
+  font-style: italic;
+  color: var(--color-text-muted);
+  line-height: 1.8;
+  white-space: pre-wrap;
+}
+
+/* Separador vertical entre colunas (desktop) */
+@media (min-width: 768px) {
+  .modal__coluna + .modal__coluna {
+    border-left: 1px solid var(--color-border);
+    padding-left: clamp(2rem, 5vw, 4rem);
+  }
+}
+
+/* ── Atribuição no modo T ─────────────────── */
+
+.modal__texto-colunas + .modal__atribuicao-wrap {
+  margin-top: 2rem;
+  width: 100%;
+}
+
+/* ── EXIF no modo T ──────────────────────── */
+
+.modal__corpo--so-texto .modal__exif-linha {
+  margin-top: 2rem;
 }
 
 /* ═══════════════════════════════════════════
@@ -362,63 +545,6 @@
    ═══════════════════════════════════════════ */
 
 @media (prefers-reduced-motion: reduce) {
-  .card__inner { transition: none; }
-  .card__timer--running { transition: none; }
+  .modal { transition: none; }
   #loader { animation: none; }
-}
-
-/* ═══════════════════════════════════════════
-   VIA IA — Atribuição e tooltip
-   ═══════════════════════════════════════════ */
-
-.card__atribuicao-wrap {
-  position: relative;
-  margin-top: auto;
-  padding-top: 0.5rem;
-  border-top: 1px solid var(--color-border);
-}
-
-/* "· via IA" — mesmo peso visual que o ano */
-.card__via-ia {
-  font-family: var(--font-body);
-  font-size: 0.72rem;
-  font-weight: 300;
-  color: var(--color-text-faint);
-  letter-spacing: 0.05em;
-  border-bottom: 1px dotted var(--color-text-faint);
-  cursor: pointer;
-  user-select: none;
-  transition: opacity 0.2s;
-}
-
-.card__via-ia:hover {
-  opacity: 0.7;
-}
-
-/* Tooltip */
-.card__tooltip {
-  display: none;
-  position: absolute;
-  bottom: calc(100% + 0.5rem);
-  left: 0;
-  right: 0;
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: 2px;
-  padding: 0.6rem 0.75rem;
-  font-family: var(--font-body);
-  font-size: 0.65rem;
-  font-weight: 300;
-  color: var(--color-text-muted);
-  line-height: 1.5;
-  letter-spacing: 0.03em;
-  z-index: 20;
-  pointer-events: none;
-}
-
-.card__tooltip--visible {
-  display: block;
-}
-
-
 }
