@@ -236,10 +236,10 @@
   pointer-events: none;
 }
 
-/* EXIF no modo ▢ — canto inferior direito */
+/* EXIF no modo ▢ — canto inferior direito, acima do título */
 .modal__exif-overlay {
   position: absolute;
-  bottom: 1rem;
+  bottom: 3.5rem;
   right: var(--modal-padding);
   display: flex;
   gap: 1rem;
@@ -250,6 +250,14 @@
   text-transform: uppercase;
   color: rgba(232, 232, 232, 0.45);
   pointer-events: none;
+  text-align: right;
+}
+
+@media (max-width: 767px) {
+  /* Em mobile: EXIF sobreposto, escondido para evitar colisão com título */
+  .modal__exif-overlay {
+    display: none;
+  }
 }
 
 .modal__exif-overlay a {
@@ -483,6 +491,19 @@
     border-left: 1px solid var(--color-border);
     padding-left: clamp(2rem, 5vw, 4rem);
   }
+}
+
+/* Título no modo T — acima das colunas */
+.modal__titulo-modoT {
+  font-family: var(--font-titulo);
+  font-size: clamp(1.2rem, 3vw, 2rem);
+  font-weight: 400;
+  font-style: normal;
+  color: var(--color-text);
+  line-height: 1.2;
+  letter-spacing: 0.01em;
+  width: 100%;
+  margin-bottom: 0.5rem;
 }
 
 /* Rodapé do modo T: atribuição + EXIF em linha horizontal */

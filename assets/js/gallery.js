@@ -126,6 +126,7 @@ let elExifLinha     = null;
 let elTextoColunas  = null;
 let elIdiomas       = null;
 let elRodapeTexto   = null;
+let elTituloModoT   = null;
 let elBtnFoto       = null;
 let elBtnFotoTexto  = null;
 let elBtnTexto      = null;
@@ -244,6 +245,10 @@ function construirModal() {
   elTextoWrap.appendChild(elAttrWrap);
   elTextoWrap.appendChild(elExifLinha);
 
+  // Título no modo T — acima das colunas
+  elTituloModoT = document.createElement("h2");
+  elTituloModoT.className = "modal__titulo-modoT";
+
   // Colunas para modo T
   elTextoColunas = document.createElement("div");
   elTextoColunas.className = "modal__texto-colunas";
@@ -254,6 +259,7 @@ function construirModal() {
 
   elCorpo.appendChild(elFotoWrap);
   elCorpo.appendChild(elTextoWrap);
+  elCorpo.appendChild(elTituloModoT);
   elCorpo.appendChild(elTextoColunas);
   elCorpo.appendChild(elRodapeTexto);
 
@@ -299,8 +305,9 @@ function abrirModal(foto) {
   // EXIF linha (modos ◫ e T)
   preencherExif(elExifLinha, foto, false);
 
-  // Título no modo ◫
-  elTitulo.textContent = foto.titulo || "";
+  // Título no modo ◫ e modo T
+  elTitulo.textContent    = foto.titulo || "";
+  elTituloModoT.textContent = foto.titulo || "";
 
   // Atribuição + via IA
   if (foto.autor_texto) {
@@ -372,6 +379,7 @@ function definirModo(modo) {
       elExifOverlay.style.display   = "";
       elTextoWrap.style.display     = "none";
       elTextoColunas.style.display  = "none";
+      elTituloModoT.style.display   = "none";
       elRodapeTexto.style.display   = "none";
       // Nudge nos botões inativos — uma vez por sessão
       if (!nudgeModosMostrado) {
@@ -396,6 +404,7 @@ function definirModo(modo) {
       elExifOverlay.style.display   = "none";
       elTextoWrap.style.display     = "";
       elTextoColunas.style.display  = "none";
+      elTituloModoT.style.display   = "none";
       elRodapeTexto.style.display   = "none";
       // Nudge no selector de idioma — uma vez por sessão
       if (!nudgeIdiomaMostrado && elIdiomas.style.display !== "none") {
@@ -413,10 +422,11 @@ function definirModo(modo) {
 
     case "texto":
       elCorpo.classList.add("modal__corpo--so-texto");
-      elFotoWrap.style.display     = "none";
-      elTextoWrap.style.display    = "none";
-      elTextoColunas.style.display = "";
-      elRodapeTexto.style.display  = "";
+      elFotoWrap.style.display      = "none";
+      elTextoWrap.style.display     = "none";
+      elTituloModoT.style.display   = "";
+      elTextoColunas.style.display  = "";
+      elRodapeTexto.style.display   = "";
       // Mover atribuição e EXIF para o rodapé do modo T
       elRodapeTexto.appendChild(elAttrWrap);
       elRodapeTexto.appendChild(elExifLinha);
