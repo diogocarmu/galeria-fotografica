@@ -2,7 +2,7 @@
    DESIGN TOKENS
    ═══════════════════════════════════════════ */
 
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:wght@300;400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:wght@300;400&family=Playfair+Display:wght@400;500&display=swap');
 
 :root {
   /* Paleta */
@@ -16,6 +16,7 @@
 
   /* Tipografia */
   --font-display: "Cormorant Garamond", Georgia, serif;
+  --font-titulo:  "Playfair Display", Georgia, serif;
   --font-body:    "DM Sans", system-ui, sans-serif;
 
   /* Galeria */
@@ -35,11 +36,8 @@
 
 /* ═══════════════════════════════════════════
    GALERIA — CSS Grid (definido em responsive.css)
-   Os tokens de grid vivem aqui; a declaração
-   display:grid está em responsive.css.
    ═══════════════════════════════════════════ */
 
-/* Cartões: altura proporcional ao aspect-ratio */
 .card--landscape { aspect-ratio: 4 / 3; }
 .card--portrait  { aspect-ratio: 3 / 4; }
 .card--square    { aspect-ratio: 1 / 1; }
@@ -100,7 +98,6 @@
   height: var(--modal-barra-h);
   display: flex;
   align-items: center;
-  justify-content: space-between;
   padding: 0 1rem;
   z-index: 10;
   border-bottom: 1px solid var(--color-border);
@@ -140,14 +137,160 @@
   background: rgba(200, 169, 110, 0.08);
 }
 
-/* Selector de idioma — centro ou lado direito da barra */
+/* Nudge: pulso suave nos botões inativos na primeira abertura */
+@keyframes nudge-pulso {
+  0%   { opacity: 1; }
+  40%  { opacity: 0.25; }
+  100% { opacity: 1; }
+}
+
+.modal__modo-btn--nudge {
+  animation: nudge-pulso 1.4s ease-in-out 0.6s 2;
+}
+
+/* Botão fechar — lado direito */
+.modal__fechar {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-text-faint);
+  font-size: 1rem;
+  line-height: 1;
+  padding: 0.35rem 0.4rem;
+  border-radius: 2px;
+  transition: color 0.18s;
+  margin-left: auto;
+  user-select: none;
+}
+
+.modal__fechar:hover {
+  color: var(--color-text);
+}
+
+/* ── Corpo do modal ───────────────────────── */
+
+.modal__corpo {
+  flex: 1;
+  display: flex;
+  margin-top: var(--modal-barra-h);
+  overflow: hidden;
+}
+
+/* Estado só texto (modo T) */
+.modal__corpo--so-texto {
+  flex-direction: column;
+  overflow-y: auto;
+  padding: var(--modal-padding);
+  scrollbar-width: none;
+}
+
+.modal__corpo--so-texto::-webkit-scrollbar { display: none; }
+
+/* ── Área da foto ─────────────────────────── */
+
+.modal__foto-wrap {
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: #000;
+}
+
+/* Modo ▢: foto centrada, contain para não cortar */
+.modal__foto-wrap--full {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal__foto-wrap--full .modal__foto {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* Modo ◫: foto cropped com cover (dimensões em responsive.css) */
+.modal__foto-wrap--crop .modal__foto {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Modo ▢: título sobreimposto */
+.modal__titulo-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 3rem var(--modal-padding) 1.25rem;
+  background: linear-gradient(to top, rgba(0,0,0,0.72) 0%, transparent 100%);
+  font-family: var(--font-titulo);
+  font-size: clamp(1rem, 2.5vw, 1.5rem);
+  font-weight: 400;
+  font-style: normal;
+  color: var(--color-text);
+  letter-spacing: 0.01em;
+  line-height: 1.3;
+  pointer-events: none;
+}
+
+/* EXIF no modo ▢ — canto inferior direito */
+.modal__exif-overlay {
+  position: absolute;
+  bottom: 1rem;
+  right: var(--modal-padding);
+  display: flex;
+  gap: 1rem;
+  font-family: var(--font-body);
+  font-size: 0.6rem;
+  font-weight: 300;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(232, 232, 232, 0.45);
+  pointer-events: none;
+}
+
+.modal__exif-overlay a {
+  color: rgba(200, 169, 110, 0.55);
+  pointer-events: all;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.modal__exif-overlay a:hover {
+  color: var(--color-accent);
+}
+
+/* ── Área do texto (modo ◫) ──────────────── */
+
+.modal__texto-wrap {
+  display: flex;
+  flex-direction: column;
+  padding: var(--modal-padding);
+  gap: 1.25rem;
+  scrollbar-width: none;
+}
+
+.modal__texto-wrap::-webkit-scrollbar { display: none; }
+
+/* Título no modo ◫ */
+.modal__titulo {
+  font-family: var(--font-titulo);
+  font-size: clamp(1.1rem, 2.5vw, 1.6rem);
+  font-weight: 400;
+  font-style: normal;
+  color: var(--color-text);
+  line-height: 1.25;
+  letter-spacing: 0.01em;
+}
+
+/* Selector de idioma — dentro da área de texto, acima do corpo */
 .modal__idiomas {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
 }
 
 .modal__idioma-btn {
@@ -184,140 +327,15 @@
   pointer-events: none;
 }
 
-/* Botão fechar — lado direito */
-.modal__fechar {
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: var(--color-text-faint);
-  font-size: 1rem;
-  line-height: 1;
-  padding: 0.35rem 0.4rem;
-  border-radius: 2px;
-  transition: color 0.18s;
-  margin-left: auto;
-  user-select: none;
+/* Nudge no selector de idioma — pulso na primeira activação */
+@keyframes nudge-idioma {
+  0%   { opacity: 1; }
+  35%  { opacity: 0.2; }
+  100% { opacity: 1; }
 }
 
-.modal__fechar:hover {
-  color: var(--color-text);
-}
-
-/* ── Corpo do modal ───────────────────────── */
-
-.modal__corpo {
-  flex: 1;
-  display: flex;
-  margin-top: var(--modal-barra-h);
-  overflow: hidden;
-}
-
-/* Estado com foto (modos ▢ e ◫) */
-.modal__corpo--com-foto {
-  /* flex-direction definido em responsive.css */
-}
-
-/* Estado só texto (modo T) */
-.modal__corpo--so-texto {
-  align-items: flex-start;
-  overflow-y: auto;
-  padding: var(--modal-padding);
-}
-
-/* ── Área da foto (modos ▢ e ◫) ──────────── */
-
-.modal__foto-wrap {
-  position: relative;
-  overflow: hidden;
-  flex-shrink: 0;
-  background: #000;
-}
-
-/* Modo ▢: foto a ecrã inteiro */
-.modal__foto-wrap--full {
-  width: 100%;
-  height: 100%;
-}
-
-/* Modo ◫: foto cropped (dimensões em responsive.css) */
-.modal__foto-wrap--crop {
-  /* dimensões definidas em responsive.css */
-}
-
-.modal__foto {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
-
-/* Modo ▢: título sobreimposto */
-.modal__titulo-overlay {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  padding: 3rem var(--modal-padding) 1.25rem;
-  background: linear-gradient(to top, rgba(0,0,0,0.72) 0%, transparent 100%);
-  font-family: var(--font-display);
-  font-size: clamp(1rem, 2.5vw, 1.5rem);
-  font-weight: 300;
-  font-style: italic;
-  color: var(--color-text);
-  letter-spacing: 0.02em;
-  line-height: 1.3;
-  pointer-events: none;
-}
-
-/* EXIF no modo ▢ — canto inferior direito, sobre a foto */
-.modal__exif-overlay {
-  position: absolute;
-  bottom: 1rem;
-  right: var(--modal-padding);
-  display: flex;
-  gap: 1rem;
-  font-family: var(--font-body);
-  font-size: 0.6rem;
-  font-weight: 300;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: rgba(232, 232, 232, 0.45);
-  pointer-events: none;
-}
-
-.modal__exif-overlay a {
-  color: rgba(200, 169, 110, 0.55);
-  pointer-events: all;
-  text-decoration: none;
-  transition: color 0.2s;
-}
-
-.modal__exif-overlay a:hover {
-  color: var(--color-accent);
-}
-
-/* ── Área do texto (modo ◫) ──────────────── */
-
-.modal__texto-wrap {
-  display: flex;
-  flex-direction: column;
-  padding: var(--modal-padding);
-  gap: 1.5rem;
-  /* overflow-y e dimensões em responsive.css */
-  scrollbar-width: none;
-}
-
-.modal__texto-wrap::-webkit-scrollbar { display: none; }
-
-/* Título no modo ◫ */
-.modal__titulo {
-  font-family: var(--font-display);
-  font-size: clamp(1.1rem, 2.5vw, 1.6rem);
-  font-weight: 400;
-  font-style: italic;
-  color: var(--color-text);
-  line-height: 1.25;
-  letter-spacing: 0.01em;
+.modal__idioma-btn--nudge {
+  animation: nudge-idioma 1.2s ease-in-out 0.4s 2;
 }
 
 /* Texto literário único (modo ◫) */
@@ -388,7 +406,7 @@
 
 .modal__tooltip--visible { display: block; }
 
-/* EXIF em linha no modo ◫ e T */
+/* EXIF em linha no modo ◫ — discreto, em baixo */
 .modal__exif-linha {
   display: flex;
   flex-wrap: wrap;
@@ -412,13 +430,13 @@
 
 .modal__exif-linha a:hover { opacity: 0.7; }
 
-/* ── Modo T — só texto, colunas ──────────── */
+/* ── Modo T — só texto ───────────────────── */
 
+/* Colunas de texto — ocupam toda a largura */
 .modal__texto-colunas {
   display: flex;
   gap: clamp(2rem, 5vw, 4rem);
   width: 100%;
-  /* flex-direction em responsive.css */
 }
 
 .modal__coluna {
@@ -448,7 +466,7 @@
   white-space: pre-wrap;
 }
 
-/* Secundárias: tipografia menor */
+/* Secundárias: tipografia menor, atenuada */
 .modal__coluna--secundaria .modal__coluna-texto {
   font-family: var(--font-display);
   font-size: clamp(0.9rem, 1.6vw, 1.1rem);
@@ -467,17 +485,31 @@
   }
 }
 
-/* ── Atribuição no modo T ─────────────────── */
-
-.modal__texto-colunas + .modal__atribuicao-wrap {
-  margin-top: 2rem;
+/* Rodapé do modo T: atribuição + EXIF em linha horizontal */
+.modal__rodape-texto {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.5rem 2rem;
+  margin-top: 2.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--color-border);
   width: 100%;
 }
 
-/* ── EXIF no modo T ──────────────────────── */
+/* No modo T, a atribuição fica no rodapé, sem border-top própria */
+.modal__corpo--so-texto .modal__atribuicao-wrap {
+  border-top: none;
+  padding-top: 0;
+  position: static;
+}
 
+/* No modo T, o EXIF fica no rodapé, sem border-top própria */
 .modal__corpo--so-texto .modal__exif-linha {
-  margin-top: 2rem;
+  border-top: none;
+  padding-top: 0;
+  margin-top: 0;
+  flex-wrap: wrap;
 }
 
 /* ═══════════════════════════════════════════
@@ -546,5 +578,7 @@
 
 @media (prefers-reduced-motion: reduce) {
   .modal { transition: none; }
+  .modal__modo-btn--nudge { animation: none; }
+  .modal__idioma-btn--nudge { animation: none; }
   #loader { animation: none; }
 }

@@ -125,9 +125,14 @@ let elTooltip       = null;
 let elExifLinha     = null;
 let elTextoColunas  = null;
 let elIdiomas       = null;
+let elRodapeTexto   = null;
 let elBtnFoto       = null;
 let elBtnFotoTexto  = null;
 let elBtnTexto      = null;
+
+// Flags de nudge — disparam uma vez por sessão de navegação
+let nudgeModosMostrado  = false;
+let nudgeIdiomaMostrado = false;
 
 function construirModal() {
   modalEl = document.createElement("div");
@@ -154,10 +159,6 @@ function construirModal() {
   modos.appendChild(elBtnFotoTexto);
   modos.appendChild(elBtnTexto);
 
-  // Selector de idioma (centro da barra) — preenchido em abrirModal()
-  elIdiomas = document.createElement("div");
-  elIdiomas.className = "modal__idiomas";
-
   // Botão fechar
   const btnFechar = document.createElement("button");
   btnFechar.className = "modal__fechar";
@@ -166,7 +167,6 @@ function construirModal() {
   btnFechar.addEventListener("click", fecharModal);
 
   barra.appendChild(modos);
-  barra.appendChild(elIdiomas);
   barra.appendChild(btnFechar);
 
   // ── Corpo ────────────────────────────────────────────────
@@ -234,7 +234,12 @@ function construirModal() {
   elExifLinha = document.createElement("div");
   elExifLinha.className = "modal__exif-linha";
 
+  // Selector de idioma — entre título e texto, dentro da área de texto
+  elIdiomas = document.createElement("div");
+  elIdiomas.className = "modal__idiomas";
+
   elTextoWrap.appendChild(elTitulo);
+  elTextoWrap.appendChild(elIdiomas);
   elTextoWrap.appendChild(elTexto);
   elTextoWrap.appendChild(elAttrWrap);
   elTextoWrap.appendChild(elExifLinha);
@@ -243,9 +248,14 @@ function construirModal() {
   elTextoColunas = document.createElement("div");
   elTextoColunas.className = "modal__texto-colunas";
 
+  // Rodapé modo T: atribuição + EXIF em linha horizontal abaixo das colunas
+  elRodapeTexto = document.createElement("div");
+  elRodapeTexto.className = "modal__rodape-texto";
+
   elCorpo.appendChild(elFotoWrap);
   elCorpo.appendChild(elTextoWrap);
   elCorpo.appendChild(elTextoColunas);
+  elCorpo.appendChild(elRodapeTexto);
 
   modalEl.appendChild(barra);
   modalEl.appendChild(elCorpo);
@@ -355,34 +365,61 @@ function definirModo(modo) {
 
     case "foto":
       elCorpo.classList.add("modal__corpo--com-foto");
-      elFotoWrap.style.display    = "";
+      elFotoWrap.style.display      = "";
       elFotoWrap.classList.remove("modal__foto-wrap--crop");
       elFotoWrap.classList.add("modal__foto-wrap--full");
       elTituloOverlay.style.display = "";
       elExifOverlay.style.display   = "";
       elTextoWrap.style.display     = "none";
       elTextoColunas.style.display  = "none";
+      elRodapeTexto.style.display   = "none";
+      // Nudge nos botões inativos — uma vez por sessão
+      if (!nudgeModosMostrado) {
+        nudgeModosMostrado = true;
+        [elBtnFotoTexto, elBtnTexto].forEach(btn => {
+          btn.classList.remove("modal__modo-btn--nudge");
+          void btn.offsetWidth; // reflow para reiniciar animação
+          btn.classList.add("modal__modo-btn--nudge");
+          btn.addEventListener("animationend", () => {
+            btn.classList.remove("modal__modo-btn--nudge");
+          }, { once: true });
+        });
+      }
       break;
 
     case "foto-texto":
       elCorpo.classList.add("modal__corpo--com-foto");
-      elFotoWrap.style.display    = "";
+      elFotoWrap.style.display      = "";
       elFotoWrap.classList.remove("modal__foto-wrap--full");
       elFotoWrap.classList.add("modal__foto-wrap--crop");
       elTituloOverlay.style.display = "none";
       elExifOverlay.style.display   = "none";
       elTextoWrap.style.display     = "";
       elTextoColunas.style.display  = "none";
+      elRodapeTexto.style.display   = "none";
+      // Nudge no selector de idioma — uma vez por sessão
+      if (!nudgeIdiomaMostrado && elIdiomas.style.display !== "none") {
+        nudgeIdiomaMostrado = true;
+        elIdiomas.querySelectorAll(".modal__idioma-btn").forEach(btn => {
+          btn.classList.remove("modal__idioma-btn--nudge");
+          void btn.offsetWidth;
+          btn.classList.add("modal__idioma-btn--nudge");
+          btn.addEventListener("animationend", () => {
+            btn.classList.remove("modal__idioma-btn--nudge");
+          }, { once: true });
+        });
+      }
       break;
 
     case "texto":
       elCorpo.classList.add("modal__corpo--so-texto");
-      elFotoWrap.style.display    = "none";
-      elTextoWrap.style.display   = "none";
+      elFotoWrap.style.display     = "none";
+      elTextoWrap.style.display    = "none";
       elTextoColunas.style.display = "";
-      // Mover atribuição e EXIF para dentro do corpo so-texto
-      elCorpo.appendChild(elAttrWrap);
-      elCorpo.appendChild(elExifLinha);
+      elRodapeTexto.style.display  = "";
+      // Mover atribuição e EXIF para o rodapé do modo T
+      elRodapeTexto.appendChild(elAttrWrap);
+      elRodapeTexto.appendChild(elExifLinha);
       break;
   }
 
