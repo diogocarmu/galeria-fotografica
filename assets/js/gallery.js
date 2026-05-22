@@ -26,6 +26,7 @@ let rendered  = 0;
 let fotoActiva = null;   // objecto foto actualmente no modal
 let modoActivo = "foto"; // "foto" | "foto-texto" | "texto"
 let idiomaActivo = null; // código do idioma activo no modo ◫
+let blocosActivos = [];  // blocos de texto da foto activa
 
 // ── Textos do disclaimer por confiança ───────────────────────
 
@@ -393,6 +394,7 @@ function abrirModal(foto) {
   elTooltip.classList.remove("modal__tooltip--visible");
 
   // Selector de idioma
+  blocosActivos = blocos;
   preencherIdiomas(blocos);
 
   // Colunas modo T
