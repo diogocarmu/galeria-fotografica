@@ -296,11 +296,9 @@ async function partilharFoto() {
   const bloco  = blocos.find(b => b.lang === idiomaActivo) || blocos[0];
   const texto  = bloco ? bloco.texto : "";
   const autor  = fotoActiva.autor_texto
-    ? 
+    ? `${fotoActiva.autor_texto}${fotoActiva.ano_texto ? ", " + fotoActiva.ano_texto : ""}`
     : "";
-  const shareText = [texto, autor].filter(Boolean).join("
-
-");
+  const shareText = [texto, autor].filter(Boolean).join("\n\n");
 
   // Descarregar imagem como Blob para incluir na partilha
   let files;
@@ -316,7 +314,7 @@ async function partilharFoto() {
                : blob.type === "image/jpeg" ? "jpg"
                : blob.type === "image/png"  ? "png"
                : "jpg";
-    const file = new File([blob], , { type: blob.type });
+    const file = new File([blob], `${fotoActiva.id}.${ext}`, { type: blob.type });
 
     // Verificar se o browser aceita partilha de ficheiros
     if (navigator.canShare({ files: [file] })) {
