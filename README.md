@@ -1,6 +1,6 @@
 # Galeria Fotográfica
 
-Site estático com galeria fotográfica interativa, publicado em GitHub Pages. Cada fotografia tem um verso com um texto literário real (poema, aforismo ou citação) selecionado por IA, apresentado no idioma original, em português e em inglês.
+Site estático com galeria fotográfica interativa, publicado em GitHub Pages. Cada fotografia tem um modal com um texto literário real (poema, aforismo ou citação) selecionado por IA, apresentado no idioma original, em português e em inglês.
 
 ---
 
@@ -36,13 +36,13 @@ galeria-fotografica/
 └── assets/
     ├── css/
     │   ├── reset.css       # Reset global, scrollbar oculta
-    │   ├── gallery.css     # Layout, cartões, flip, verso literário, tooltip
-    │   └── responsive.css  # Breakpoints mobile → desktop
+    │   ├── gallery.css     # Tokens, cartões, modal lightbox (3 modos)
+    │   └── responsive.css  # CSS Columns para grelha; breakpoints do modal
     └── js/
         ├── config.js       # Único ficheiro a editar — endpoint GAS e parâmetros
         ├── api.js          # Fetch ao GAS + shuffle Fisher-Yates
         ├── seo.js          # JSON-LD dinâmico (ImageGallery + ImageObject)
-        └── gallery.js      # Render de cartões, flip, timer, tooltip "via IA"
+        └── gallery.js      # Render de cartões, modal lightbox, scroll infinito
 ```
 
 ---
@@ -95,6 +95,26 @@ Separador: `galeria`
 | P | `texto_en` | Versão inglesa |
 | Q | `idioma_original` | Código do idioma (`pt`, `en`, `es`, etc.) |
 | R | `confianca_texto` | `alta` / `media` / `baixa` |
+
+---
+
+## Modal Lightbox
+
+Clicar numa fotografia abre um modal a ecrã inteiro com três modos de visualização, alternáveis por ícones na barra superior.
+
+**Estrutura permanente:**
+- Barra topo: `▢ ◫ T | Título da fotografia × `
+- Barra fundo: câmara · data · coordenadas GPS
+
+**Modos:**
+
+| Ícone | Modo | Descrição |
+|---|---|---|
+| `▢` | Só foto | Foto centrada com `object-fit: contain`. Fundo preto. |
+| `◫` | Foto + texto | Foto cropped à esquerda (50% desktop, 45vh mobile). Texto, selector de idioma e autor à direita/baixo. |
+| `T` | Só texto | Colunas por idioma (original maior, secundárias atenuadas). Autor imediatamente após coluna original. |
+
+O selector de idioma aparece no modo `◫` entre o selector e o corpo de texto. Fecha com `×` ou tecla `ESC`.
 
 ---
 
@@ -175,17 +195,16 @@ git push
 ## Configuração (config.js)
 
 ```javascript
-GAS_ENDPOINT:       // URL do Web App GAS
-BATCH_SIZE: 20      // Fotos carregadas por batch no scroll infinito
-FLIP_ENABLED: true  // Activar/desactivar flip dos cartões
-FLIP_AUTO_CLOSE_MS: 10000  // Fecho automático do verso (ms)
+GAS_ENDPOINT:   // URL do Web App GAS
+BATCH_SIZE: 20  // Fotos carregadas por batch no scroll infinito
 ```
 
 ---
 
 ## Débitos Conhecidos
 
-- **Layout landscape:** fotos em modo landscape ficam pequenas em grelha de 4 colunas. Solução correcta: migrar para CSS Grid com `grid-auto-flow: dense` (landscape 2 colunas, portrait 1 coluna)
-- **Clasp+TS:** os ficheiros GAS não estão no Git. Migrar para Clasp para ter histórico de versões e edição local
-- **Regeneração de conteúdo:** não existe mecanismo para regenerar título/texto de fotos já publicadas quando o prompt melhora
-- **Notificação de lote:** sem notificação quando o processamento diário termina
+- **Grelha:** usa CSS Columns (3 colunas desktop). Foi tentada migração para CSS Grid com `grid-auto-flow: dense` (landscape 2 colunas, portrait 1 coluna) mas revertida por instabilidade. Masonry layout (colunas independentes, sem crop, sem lacunas) é a solução ideal a explorar.
+- **Clasp+TS:** os ficheiros GAS não estão no Git. Migrar para Clasp para ter histórico de versões e edição local.
+- **Regeneração de conteúdo:** não existe mecanismo para regenerar título/texto de fotos já publicadas quando o prompt melhora.
+- **Notificação de lote:** sem notificação quando o processamento diário termina.
+- **config.js obsoleto:** `FLIP_ENABLED` e `FLIP_AUTO_CLOSE_MS` já não são usados (flip removido). Remover numa iteração futura.
