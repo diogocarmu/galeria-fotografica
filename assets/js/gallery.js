@@ -131,7 +131,6 @@ let elTituloModoT   = null;
 let elBtnFoto       = null;
 let elBtnFotoTexto  = null;
 let elBtnTexto      = null;
-let elBtnPartilha   = null;
 
 // Flags de nudge — disparam uma vez por sessão de navegação
 let nudgeModosMostrado  = false;
@@ -175,19 +174,9 @@ function construirModal() {
   btnFechar.textContent = "×";
   btnFechar.addEventListener("click", fecharModal);
 
-  // Botão de partilha — só criado se Web Share API disponível
-  if (navigator.share && navigator.canShare) {
-    elBtnPartilha = document.createElement("button");
-    elBtnPartilha.className = "modal__partilhar";
-    elBtnPartilha.setAttribute("aria-label", "Partilhar");
-    elBtnPartilha.textContent = "↑";
-    elBtnPartilha.addEventListener("click", partilharFoto);
-  }
-
   barra.appendChild(modos);
   barra.appendChild(barraSep);
   barra.appendChild(elBarraTitulo);
-  if (elBtnPartilha) barra.appendChild(elBtnPartilha);
   barra.appendChild(btnFechar);
 
   // ── Rodapé EXIF (modo ▢) — faixa em baixo ───────────────
@@ -285,66 +274,6 @@ function construirModal() {
   document.body.appendChild(modalEl);
 }
 
-// ══════════════════════════════════════════════════════════════
-// PARTILHA
-// ══════════════════════════════════════════════════════════════
-
-async function partilharFoto() {
-  if (!fotoActiva) return;
-
-  // Construir texto: texto do idioma activo + autor + ano
-  const blocos = blocosActivos;
-  const bloco  = blocos.find(b => b.lang === idiomaActivo) || blocos[0];
-  const texto  = bloco ? bloco.texto : "";
-  const autor  = fotoActiva.autor_texto
-    ? `${fotoActiva.autor_texto}${fotoActiva.ano_texto ? ", " + fotoActiva.ano_texto : ""}`
-    : "";
-  const shareText = [texto, autor].filter(Boolean).join("\n\n");
-
-  // Descarregar imagem como Blob para incluir na partilha
-  let files;
-  try {
-    if (elBtnPartilha) {
-      elBtnPartilha.textContent = "…";
-      elBtnPartilha.disabled = true;
-    }
-    const resp = await fetch(fotoActiva.url_imagem);
-    const blob = await resp.blob();
-    // Determinar extensão a partir do tipo MIME
-    const ext  = blob.type === "image/webp" ? "webp"
-               : blob.type === "image/jpeg" ? "jpg"
-               : blob.type === "image/png"  ? "png"
-               : "jpg";
-    const file = new File([blob], `${fotoActiva.id}.${ext}`, { type: blob.type });
-
-    // Verificar se o browser aceita partilha de ficheiros
-    if (navigator.canShare({ files: [file] })) {
-      files = [file];
-    }
-  } catch (err) {
-    console.warn("[partilha] Não foi possível obter imagem:", err);
-  } finally {
-    if (elBtnPartilha) {
-      elBtnPartilha.textContent = "↑";
-      elBtnPartilha.disabled = false;
-    }
-  }
-
-  try {
-    const payload = {
-      title: fotoActiva.titulo || "",
-      text:  shareText,
-    };
-    if (files) payload.files = files;
-    await navigator.share(payload);
-  } catch (err) {
-    // AbortError = utilizador cancelou — não é erro
-    if (err.name !== "AbortError") {
-      console.warn("[partilha] Falha:", err);
-    }
-  }
-}
-
 function criarBotaoModo(simbolo, modo, label) {
   const btn = document.createElement("button");
   btn.className = "modal__modo-btn";
@@ -393,12 +322,11 @@ function abrirModal(foto) {
   }
   elTooltip.classList.remove("modal__tooltip--visible");
 
-  // Selector de idioma
+  // Guardar blocos para uso em definirModo
   blocosActivos = blocos;
-  preencherIdiomas(blocos);
 
-  // Colunas modo T
-  preencherColunas(blocos, foto);
+  // Selector de idioma
+  preencherIdiomas(blocos);
 
   // Idioma activo por defeito: primeiro bloco (original)
   idiomaActivo = blocos.length > 0 ? blocos[0].lang : null;
@@ -442,10 +370,6 @@ function definirModo(modo) {
   // elRodapeExif sempre visível — está no fluxo flex do modal
   elRodapeExif.style.display = "";
 
-  // Atribuição sempre no textoWrap (modos ◫ e T tratam por CSS/posição)
-  // Repor antes de cada modo para evitar estado órfão
-  elTextoWrap.appendChild(elAttrWrap);
-
   switch (modo) {
 
     case "foto":
@@ -480,8 +404,9 @@ function definirModo(modo) {
       elTextoColunas.style.display = "none";
       elTituloModoT.style.display  = "none";
       elRodapeTexto.style.display  = "none";
-      // elAttrWrap imediatamente após elTexto, sem separador
-      elTextoWrap.insertBefore(elAttrWrap, elTexto.nextSibling);
+      // elAttrWrap: garantir que está no elTextoWrap, imediatamente após elTexto
+      elTextoWrap.appendChild(elAttrWrap); // move de qualquer sítio para textoWrap
+      elTextoWrap.insertBefore(elAttrWrap, elTexto.nextSibling); // reposicionar após texto
       // Nudge no selector de idioma — uma vez por sessão
       if (!nudgeIdiomaMostrado && elIdiomas.children.length > 0) {
         nudgeIdiomaMostrado = true;
@@ -503,7 +428,8 @@ function definirModo(modo) {
       elTituloModoT.style.display  = "none";
       elTextoColunas.style.display = "";
       elRodapeTexto.style.display  = "none";
-      // elAttrWrap é inserido por preencherColunas na coluna original
+      // Reconstruir colunas agora: elAttrWrap está disponível para inserir na coluna original
+      preencherColunas(blocosActivos, fotoActiva);
       break;
   }
 }
