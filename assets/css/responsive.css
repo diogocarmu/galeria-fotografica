@@ -1,7 +1,6 @@
 /* ═══════════════════════════════════════════
    RESPONSIVE — Galeria Fotográfica
-   Mobile-first. CSS Grid com grid-auto-flow: dense.
-   Landscape span 2 colunas. Aspect-ratio por orientação.
+   CSS Columns — mobile-first.
    ═══════════════════════════════════════════ */
 
 html, body {
@@ -10,62 +9,53 @@ html, body {
 }
 
 /* ══════════════════════════════════════════
-   GRELHA
+   GRELHA — CSS Columns
    ══════════════════════════════════════════ */
 
 #gallery {
-  display: grid;
-  grid-template-columns: repeat(1, 1fr);
-  grid-auto-flow: dense;
-  gap: var(--gallery-gap, 1px);
+  columns: 1;
+  column-gap: var(--gallery-gap, 1px);
   width: 100%;
   padding: 0;
-  columns: unset;
-  column-gap: unset;
-}
-
-.card {
-  width: 100%;
-  overflow: hidden;
-}
-
-/* Aspect-ratio por orientação — foto cropped a preencher célula */
-.card--landscape { aspect-ratio: 4 / 3; }
-.card--portrait  { aspect-ratio: 3 / 4; }
-.card--square    { aspect-ratio: 1 / 1; }
-
-.card__face--front img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
   display: block;
 }
 
-/* Em 1 coluna landscape não faz span */
-.card--landscape { grid-column: span 1; }
+.card {
+  break-inside: avoid;
+  display: block;
+  width: 100%;
+  margin-bottom: var(--gallery-gap, 1px);
+  overflow: hidden;
+  cursor: pointer;
+  background: var(--color-surface);
+}
 
-/* ── ≥480px — 2 colunas ─────────────────── */
+.card__face--front img {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: unset;
+  transition: transform 0.5s ease;
+}
+
+.card:hover .card__face--front img {
+  transform: scale(1.02);
+}
+
 @media (min-width: 480px) {
-  #gallery { grid-template-columns: repeat(2, 1fr); }
-  .card--landscape { grid-column: span 2; }
+  #gallery { columns: 2; }
 }
 
-/* ── ≥768px — 3 colunas ─────────────────── */
 @media (min-width: 768px) {
-  #gallery { grid-template-columns: repeat(3, 1fr); }
-  .card--landscape { grid-column: span 2; }
+  #gallery { columns: 3; }
 }
 
-/* ── ≥1200px — 4 colunas ────────────────── */
 @media (min-width: 1200px) {
-  #gallery { grid-template-columns: repeat(4, 1fr); }
-  .card--landscape { grid-column: span 2; }
+  #gallery { columns: 3; }
 }
 
-/* ── ≥1600px — 5 colunas ────────────────── */
 @media (min-width: 1600px) {
-  #gallery { grid-template-columns: repeat(5, 1fr); }
-  .card--landscape { grid-column: span 2; }
+  #gallery { columns: 4; }
 }
 
 /* ══════════════════════════════════════════
@@ -74,17 +64,14 @@ html, body {
 
 /* Desktop: modo ◫ lado a lado */
 @media (min-width: 768px) {
-
   .modal__corpo--com-foto { flex-direction: row; }
 
-  /* Modo ◫: foto à esquerda 50% */
   .modal__foto-wrap--crop {
     width: 50%;
     height: 100%;
     flex-shrink: 0;
   }
 
-  /* Modo ▢: foto ocupa toda a área entre barra e rodapé EXIF */
   .modal__foto-wrap--full {
     width: 100%;
     height: 100%;
@@ -107,7 +94,6 @@ html, body {
 
 /* Mobile */
 @media (max-width: 767px) {
-
   .modal__corpo--com-foto { flex-direction: column; }
 
   .modal__foto-wrap--full {
@@ -131,19 +117,21 @@ html, body {
 
   /* Barra em baixo em mobile */
   .modal__barra {
-    top: auto;
+    top: auto !important;
     bottom: 0;
     border-top: 1px solid var(--color-border);
     border-bottom: none;
   }
 
-  .modal__corpo--com-foto,
-  .modal__corpo--so-foto {
-    padding-bottom: 3rem;
+  /* Corpo não fica tapado pela barra inferior */
+  .modal__corpo {
+    margin-top: 0 !important;
+    margin-bottom: var(--modal-barra-h);
   }
 
-  .modal__corpo--so-texto {
-    padding-bottom: 3rem;
+  /* Rodapé EXIF escondido em mobile no modo ▢ */
+  .modal__rodape-exif {
+    display: none !important;
   }
 }
 

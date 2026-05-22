@@ -143,10 +143,10 @@
 /* Título na barra — truncado se longo */
 .modal__barra-titulo {
   font-family: var(--font-titulo);
-  font-size: 0.85rem;
+  font-size: 1.05rem;
   font-weight: 400;
   font-style: normal;
-  color: var(--color-text-muted);
+  color: var(--color-text);
   letter-spacing: 0.01em;
   white-space: nowrap;
   overflow: hidden;
@@ -273,16 +273,8 @@
 
 .modal__texto-wrap::-webkit-scrollbar { display: none; }
 
-/* Título no modo ◫ */
-.modal__titulo {
-  font-family: var(--font-titulo);
-  font-size: clamp(1.1rem, 2.5vw, 1.6rem);
-  font-weight: 400;
-  font-style: normal;
-  color: var(--color-text);
-  line-height: 1.25;
-  letter-spacing: 0.01em;
-}
+/* Título no modo ◫ — removido: título vive na barra */
+.modal__titulo { display: none; }
 
 /* Selector de idioma — entre título e texto */
 .modal__idiomas {
@@ -427,19 +419,8 @@
 
 /* ── Modo T ───────────────────────────────── */
 
-.modal__titulo-modoT {
-  font-family: var(--font-titulo);
-  font-size: clamp(1.2rem, 3vw, 2rem);
-  font-weight: 400;
-  font-style: normal;
-  color: var(--color-text);
-  line-height: 1.2;
-  letter-spacing: 0.01em;
-  width: 100%;
-  margin-bottom: 2.5rem;
-  padding-bottom: 1.5rem;
-  border-bottom: 1px solid var(--color-border);
-}
+/* Título no modo T — removido: título vive na barra */
+.modal__titulo-modoT { display: none; }
 
 .modal__texto-colunas {
   display: flex;
