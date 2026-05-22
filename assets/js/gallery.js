@@ -111,10 +111,9 @@ let modalEl = null;
 
 // Elementos internos do modal — preenchidos em construirModal()
 let elFotoWrap      = null;
-let elFotoInner     = null;
 let elFotoImg       = null;
-let elTituloOverlay = null;
-let elExifOverlay   = null;
+let elBarraTitulo   = null;
+let elRodapeExif    = null;
 let elCorpo         = null;
 let elTextoWrap     = null;
 let elTitulo        = null;
@@ -144,24 +143,30 @@ function construirModal() {
   modalEl.setAttribute("aria-modal", "true");
   modalEl.setAttribute("aria-label", "Fotografia em destaque");
 
-  // ── Barra superior ───────────────────────────────────────
+  // ── Barra superior: modos | título · fechar ──────────────
 
   const barra = document.createElement("div");
   barra.className = "modal__barra";
 
-  // Botões de modo
   const modos = document.createElement("div");
   modos.className = "modal__modos";
 
-  elBtnFoto = criarBotaoModo("▢", "foto", "Modo: só fotografia");
-  elBtnFotoTexto = criarBotaoModo("◫", "foto-texto", "Modo: fotografia e texto");
-  elBtnTexto = criarBotaoModo("T", "texto", "Modo: só texto");
+  elBtnFoto      = criarBotaoModo("▢", "foto",       "Modo: só fotografia");
+  elBtnFotoTexto = criarBotaoModo("◫", "foto-texto",  "Modo: fotografia e texto");
+  elBtnTexto     = criarBotaoModo("T", "texto",       "Modo: só texto");
 
   modos.appendChild(elBtnFoto);
   modos.appendChild(elBtnFotoTexto);
   modos.appendChild(elBtnTexto);
 
-  // Botão fechar
+  // Separador e título na barra
+  const barraSep = document.createElement("div");
+  barraSep.className = "modal__barra-sep";
+  barraSep.setAttribute("aria-hidden", "true");
+
+  elBarraTitulo = document.createElement("span");
+  elBarraTitulo.className = "modal__barra-titulo";
+
   const btnFechar = document.createElement("button");
   btnFechar.className = "modal__fechar";
   btnFechar.setAttribute("aria-label", "Fechar");
@@ -169,37 +174,29 @@ function construirModal() {
   btnFechar.addEventListener("click", fecharModal);
 
   barra.appendChild(modos);
+  barra.appendChild(barraSep);
+  barra.appendChild(elBarraTitulo);
   barra.appendChild(btnFechar);
+
+  // ── Rodapé EXIF (modo ▢) — faixa em baixo ───────────────
+
+  elRodapeExif = document.createElement("div");
+  elRodapeExif.className = "modal__rodape-exif";
 
   // ── Corpo ────────────────────────────────────────────────
 
   elCorpo = document.createElement("div");
   elCorpo.className = "modal__corpo";
 
-  // Área da foto
+  // Área da foto (modos ▢ e ◫)
   elFotoWrap = document.createElement("div");
   elFotoWrap.className = "modal__foto-wrap";
-
-  // Wrapper interno que abraça a foto real — overlays ancorados aqui
-  elFotoInner = document.createElement("div");
-  elFotoInner.className = "modal__foto-inner";
 
   elFotoImg = document.createElement("img");
   elFotoImg.className = "modal__foto";
   elFotoImg.alt       = "";
 
-  // Título sobreimposto (modo ▢)
-  elTituloOverlay = document.createElement("div");
-  elTituloOverlay.className = "modal__titulo-overlay";
-
-  // EXIF overlay (modo ▢)
-  elExifOverlay = document.createElement("div");
-  elExifOverlay.className = "modal__exif-overlay";
-
-  elFotoInner.appendChild(elFotoImg);
-  elFotoInner.appendChild(elTituloOverlay);
-  elFotoInner.appendChild(elExifOverlay);
-  elFotoWrap.appendChild(elFotoInner);
+  elFotoWrap.appendChild(elFotoImg);
 
   // Área do texto (modo ◫)
   elTextoWrap = document.createElement("div");
@@ -208,10 +205,13 @@ function construirModal() {
   elTitulo = document.createElement("h2");
   elTitulo.className = "modal__titulo";
 
+  elIdiomas = document.createElement("div");
+  elIdiomas.className = "modal__idiomas";
+
   elTexto = document.createElement("p");
   elTexto.className = "modal__texto";
 
-  // Atribuição + via IA (partilhada entre ◫ e T)
+  // Atribuição + via IA
   elAttrWrap = document.createElement("div");
   elAttrWrap.className = "modal__atribuicao-wrap";
 
@@ -237,13 +237,8 @@ function construirModal() {
   elAttrWrap.appendChild(elAttr);
   elAttrWrap.appendChild(elTooltip);
 
-  // EXIF em linha (modos ◫ e T)
   elExifLinha = document.createElement("div");
   elExifLinha.className = "modal__exif-linha";
-
-  // Selector de idioma — entre título e texto, dentro da área de texto
-  elIdiomas = document.createElement("div");
-  elIdiomas.className = "modal__idiomas";
 
   elTextoWrap.appendChild(elTitulo);
   elTextoWrap.appendChild(elIdiomas);
@@ -251,15 +246,13 @@ function construirModal() {
   elTextoWrap.appendChild(elAttrWrap);
   elTextoWrap.appendChild(elExifLinha);
 
-  // Título no modo T — acima das colunas
+  // Modo T: título + colunas + rodapé
   elTituloModoT = document.createElement("h2");
   elTituloModoT.className = "modal__titulo-modoT";
 
-  // Colunas para modo T
   elTextoColunas = document.createElement("div");
   elTextoColunas.className = "modal__texto-colunas";
 
-  // Rodapé modo T: atribuição + EXIF em linha horizontal abaixo das colunas
   elRodapeTexto = document.createElement("div");
   elRodapeTexto.className = "modal__rodape-texto";
 
@@ -271,8 +264,8 @@ function construirModal() {
 
   modalEl.appendChild(barra);
   modalEl.appendChild(elCorpo);
+  modalEl.appendChild(elRodapeExif);
 
-  // ── Fechar ao clicar no fundo (fora do conteúdo) ────────
   modalEl.addEventListener("click", (e) => {
     if (e.target === modalEl) fecharModal();
   });
@@ -302,17 +295,17 @@ function abrirModal(foto) {
   elFotoImg.src = foto.url_imagem;
   elFotoImg.alt = escapeHtml(foto.titulo) || "Fotografia";
 
-  // Título overlay (modo ▢)
-  elTituloOverlay.textContent = foto.titulo || "";
+  // Título na barra (todos os modos)
+  elBarraTitulo.textContent = foto.titulo || "";
 
-  // EXIF overlay (modo ▢)
-  preencherExif(elExifOverlay, foto, true);
+  // EXIF no rodapé inferior (modo ▢)
+  preencherExif(elRodapeExif, foto, false);
 
-  // EXIF linha (modos ◫ e T)
+  // EXIF em linha (modo ◫)
   preencherExif(elExifLinha, foto, false);
 
   // Título no modo ◫ e modo T
-  elTitulo.textContent    = foto.titulo || "";
+  elTitulo.textContent      = foto.titulo || "";
   elTituloModoT.textContent = foto.titulo || "";
 
   // Atribuição + via IA
@@ -377,24 +370,21 @@ function definirModo(modo) {
   switch (modo) {
 
     case "foto":
-      elCorpo.classList.add("modal__corpo--com-foto");
-      elFotoWrap.style.display      = "";
+      elCorpo.classList.add("modal__corpo--so-foto");
+      elFotoWrap.style.display     = "";
       elFotoWrap.classList.remove("modal__foto-wrap--crop");
       elFotoWrap.classList.add("modal__foto-wrap--full");
-      // Modo ▢: usa elFotoInner para ancorar overlays à foto real
-      elFotoInner.style.display     = "";
-      elTituloOverlay.style.display = "";
-      elExifOverlay.style.display   = "";
-      elTextoWrap.style.display     = "none";
-      elTextoColunas.style.display  = "none";
-      elTituloModoT.style.display   = "none";
-      elRodapeTexto.style.display   = "none";
+      elTextoWrap.style.display    = "none";
+      elTextoColunas.style.display = "none";
+      elTituloModoT.style.display  = "none";
+      elRodapeTexto.style.display  = "none";
+      elRodapeExif.style.display   = "";
       // Nudge nos botões inativos — uma vez por sessão
       if (!nudgeModosMostrado) {
         nudgeModosMostrado = true;
         [elBtnFotoTexto, elBtnTexto].forEach(btn => {
           btn.classList.remove("modal__modo-btn--nudge");
-          void btn.offsetWidth; // reflow para reiniciar animação
+          void btn.offsetWidth;
           btn.classList.add("modal__modo-btn--nudge");
           btn.addEventListener("animationend", () => {
             btn.classList.remove("modal__modo-btn--nudge");
@@ -405,19 +395,19 @@ function definirModo(modo) {
 
     case "foto-texto":
       elCorpo.classList.add("modal__corpo--com-foto");
-      elFotoWrap.style.display      = "";
+      elFotoWrap.style.display     = "";
       elFotoWrap.classList.remove("modal__foto-wrap--full");
       elFotoWrap.classList.add("modal__foto-wrap--crop");
-      // Modo ◫: foto vai directo ao wrap (sem inner), overlays escondidos
-      elFotoInner.style.display     = "none";
-      elTituloOverlay.style.display = "none";
-      elExifOverlay.style.display   = "none";
-      elTextoWrap.style.display     = "";
-      elTextoColunas.style.display  = "none";
-      elTituloModoT.style.display   = "none";
-      elRodapeTexto.style.display   = "none";
+      elTextoWrap.style.display    = "";
+      elTextoColunas.style.display = "none";
+      elTituloModoT.style.display  = "none";
+      elRodapeTexto.style.display  = "none";
+      elRodapeExif.style.display   = "none";
+      // Repor atribuição e EXIF no textoWrap
+      elTextoWrap.appendChild(elAttrWrap);
+      elTextoWrap.appendChild(elExifLinha);
       // Nudge no selector de idioma — uma vez por sessão
-      if (!nudgeIdiomaMostrado && elIdiomas.style.display !== "none") {
+      if (!nudgeIdiomaMostrado && elIdiomas.children.length > 0) {
         nudgeIdiomaMostrado = true;
         elIdiomas.querySelectorAll(".modal__idioma-btn").forEach(btn => {
           btn.classList.remove("modal__idioma-btn--nudge");
@@ -432,21 +422,16 @@ function definirModo(modo) {
 
     case "texto":
       elCorpo.classList.add("modal__corpo--so-texto");
-      elFotoWrap.style.display      = "none";
-      elTextoWrap.style.display     = "none";
-      elTituloModoT.style.display   = "";
-      elTextoColunas.style.display  = "";
-      elRodapeTexto.style.display   = "";
-      // Mover atribuição e EXIF para o rodapé do modo T
+      elFotoWrap.style.display     = "none";
+      elTextoWrap.style.display    = "none";
+      elTituloModoT.style.display  = "";
+      elTextoColunas.style.display = "";
+      elRodapeTexto.style.display  = "";
+      elRodapeExif.style.display   = "none";
+      // Mover atribuição e EXIF para rodapé do modo T
       elRodapeTexto.appendChild(elAttrWrap);
       elRodapeTexto.appendChild(elExifLinha);
       break;
-  }
-
-  // Quando sai do modo texto, devolve atribuição e EXIF ao textoWrap
-  if (modo !== "texto") {
-    elTextoWrap.appendChild(elAttrWrap);
-    elTextoWrap.appendChild(elExifLinha);
   }
 }
 
