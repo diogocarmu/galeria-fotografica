@@ -26,6 +26,7 @@ let rendered  = 0;
 let fotoActiva = null;   // objecto foto actualmente no modal
 let modoActivo = "foto"; // "foto" | "foto-texto" | "texto"
 let idiomaActivo = null; // código do idioma activo no modo ◫
+let blocosActivos = [];  // blocos de texto da foto activa
 
 // ── Textos do disclaimer por confiança ───────────────────────
 
@@ -321,11 +322,11 @@ function abrirModal(foto) {
   }
   elTooltip.classList.remove("modal__tooltip--visible");
 
+  // Guardar blocos para uso em definirModo
+  blocosActivos = blocos;
+
   // Selector de idioma
   preencherIdiomas(blocos);
-
-  // Colunas modo T
-  preencherColunas(blocos, foto);
 
   // Idioma activo por defeito: primeiro bloco (original)
   idiomaActivo = blocos.length > 0 ? blocos[0].lang : null;
@@ -369,10 +370,6 @@ function definirModo(modo) {
   // elRodapeExif sempre visível — está no fluxo flex do modal
   elRodapeExif.style.display = "";
 
-  // Atribuição sempre no textoWrap (modos ◫ e T tratam por CSS/posição)
-  // Repor antes de cada modo para evitar estado órfão
-  elTextoWrap.appendChild(elAttrWrap);
-
   switch (modo) {
 
     case "foto":
@@ -407,8 +404,9 @@ function definirModo(modo) {
       elTextoColunas.style.display = "none";
       elTituloModoT.style.display  = "none";
       elRodapeTexto.style.display  = "none";
-      // elAttrWrap imediatamente após elTexto, sem separador
-      elTextoWrap.insertBefore(elAttrWrap, elTexto.nextSibling);
+      // elAttrWrap: garantir que está no elTextoWrap, imediatamente após elTexto
+      elTextoWrap.appendChild(elAttrWrap); // move de qualquer sítio para textoWrap
+      elTextoWrap.insertBefore(elAttrWrap, elTexto.nextSibling); // reposicionar após texto
       // Nudge no selector de idioma — uma vez por sessão
       if (!nudgeIdiomaMostrado && elIdiomas.children.length > 0) {
         nudgeIdiomaMostrado = true;
@@ -430,7 +428,8 @@ function definirModo(modo) {
       elTituloModoT.style.display  = "none";
       elTextoColunas.style.display = "";
       elRodapeTexto.style.display  = "none";
-      // elAttrWrap é inserido por preencherColunas na coluna original
+      // Reconstruir colunas agora: elAttrWrap está disponível para inserir na coluna original
+      preencherColunas(blocosActivos, fotoActiva);
       break;
   }
 }
