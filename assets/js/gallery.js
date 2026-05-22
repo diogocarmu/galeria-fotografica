@@ -407,6 +407,8 @@ function definirModo(modo) {
       elTextoColunas.style.display = "none";
       elTituloModoT.style.display  = "none";
       elRodapeTexto.style.display  = "none";
+      // elAttrWrap imediatamente após elTexto, sem separador
+      elTextoWrap.insertBefore(elAttrWrap, elTexto.nextSibling);
       // Nudge no selector de idioma — uma vez por sessão
       if (!nudgeIdiomaMostrado && elIdiomas.children.length > 0) {
         nudgeIdiomaMostrado = true;
@@ -428,8 +430,7 @@ function definirModo(modo) {
       elTituloModoT.style.display  = "none";
       elTextoColunas.style.display = "";
       elRodapeTexto.style.display  = "none";
-      // Atribuição vai para depois das colunas no modo T
-      elCorpo.insertBefore(elAttrWrap, elRodapeExif);
+      // elAttrWrap é inserido por preencherColunas na coluna original
       break;
   }
 }
@@ -505,6 +506,12 @@ function preencherColunas(blocos, foto) {
 
     col.appendChild(lang);
     col.appendChild(texto);
+
+    // Atribuição imediatamente após o texto da coluna original
+    if (i === 0) {
+      col.appendChild(elAttrWrap);
+    }
+
     elTextoColunas.appendChild(col);
   });
 }
