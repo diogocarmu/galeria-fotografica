@@ -364,9 +364,15 @@ function definirModo(modo) {
   elIdiomas.style.display = modo === "foto-texto" ? "" : "none";
 
   // Limpar classes do corpo
-  elCorpo.classList.remove("modal__corpo--com-foto", "modal__corpo--so-texto");
+  elCorpo.classList.remove("modal__corpo--so-foto", "modal__corpo--com-foto", "modal__corpo--so-texto");
 
-  // Visibilidade dos elementos
+  // elRodapeExif sempre visível — está no fluxo flex do modal
+  elRodapeExif.style.display = "";
+
+  // Atribuição sempre no textoWrap (modos ◫ e T tratam por CSS/posição)
+  // Repor antes de cada modo para evitar estado órfão
+  elTextoWrap.appendChild(elAttrWrap);
+
   switch (modo) {
 
     case "foto":
@@ -378,7 +384,6 @@ function definirModo(modo) {
       elTextoColunas.style.display = "none";
       elTituloModoT.style.display  = "none";
       elRodapeTexto.style.display  = "none";
-      elRodapeExif.style.display   = "";
       // Nudge nos botões inativos — uma vez por sessão
       if (!nudgeModosMostrado) {
         nudgeModosMostrado = true;
@@ -402,10 +407,6 @@ function definirModo(modo) {
       elTextoColunas.style.display = "none";
       elTituloModoT.style.display  = "none";
       elRodapeTexto.style.display  = "none";
-      elRodapeExif.style.display   = "none";
-      // Repor atribuição e EXIF no textoWrap
-      elTextoWrap.appendChild(elAttrWrap);
-      elTextoWrap.appendChild(elExifLinha);
       // Nudge no selector de idioma — uma vez por sessão
       if (!nudgeIdiomaMostrado && elIdiomas.children.length > 0) {
         nudgeIdiomaMostrado = true;
@@ -424,13 +425,11 @@ function definirModo(modo) {
       elCorpo.classList.add("modal__corpo--so-texto");
       elFotoWrap.style.display     = "none";
       elTextoWrap.style.display    = "none";
-      elTituloModoT.style.display  = "";
+      elTituloModoT.style.display  = "none";
       elTextoColunas.style.display = "";
-      elRodapeTexto.style.display  = "";
-      elRodapeExif.style.display   = "none";
-      // Mover atribuição e EXIF para rodapé do modo T
-      elRodapeTexto.appendChild(elAttrWrap);
-      elRodapeTexto.appendChild(elExifLinha);
+      elRodapeTexto.style.display  = "none";
+      // Atribuição vai para depois das colunas no modo T
+      elCorpo.insertBefore(elAttrWrap, elRodapeExif);
       break;
   }
 }

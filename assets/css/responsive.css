@@ -115,24 +115,7 @@ html, body {
 
   .modal__texto-colunas { flex-direction: column; }
 
-  /* Barra em baixo em mobile */
-  .modal__barra {
-    top: auto !important;
-    bottom: 0;
-    border-top: 1px solid var(--color-border);
-    border-bottom: none;
-  }
-
-  /* Corpo não fica tapado pela barra inferior */
-  .modal__corpo {
-    margin-top: 0 !important;
-    margin-bottom: var(--modal-barra-h);
-  }
-
-  /* Rodapé EXIF escondido em mobile no modo ▢ */
-  .modal__rodape-exif {
-    display: none !important;
-  }
+  /* Mobile: barra topo e rodapé EXIF ficam no fluxo — sem ajustes adicionais */
 }
 
 /* ══════════════════════════════════════════

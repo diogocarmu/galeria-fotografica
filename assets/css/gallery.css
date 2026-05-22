@@ -72,10 +72,7 @@
 /* ── Barra superior ──────────────────────── */
 
 .modal__barra {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
+  position: relative;
   height: var(--modal-barra-h);
   display: flex;
   align-items: center;
@@ -178,13 +175,13 @@
 .modal__corpo {
   flex: 1;
   display: flex;
-  margin-top: var(--modal-barra-h);
   overflow: hidden;
+  min-height: 0;
 }
 
-/* Modo ▢: corpo ocupa tudo menos barra e rodapé EXIF */
+/* Modo ▢: foto ocupa todo o espaço disponível entre barra e rodapé */
 .modal__corpo--so-foto {
-  margin-bottom: var(--modal-rodape-h);
+  /* sem ajustes — barra e rodapé no fluxo flex do modal */
 }
 
 /* Modo T */
@@ -200,10 +197,7 @@
 /* ── Rodapé EXIF — modo ▢ ─────────────────── */
 
 .modal__rodape-exif {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
+  position: relative;
   height: var(--modal-rodape-h);
   display: flex;
   align-items: center;
@@ -218,6 +212,7 @@
   text-transform: uppercase;
   color: var(--color-text-faint);
   z-index: 10;
+  flex-shrink: 0;
 }
 
 .modal__rodape-exif a {
@@ -339,8 +334,8 @@
 
 /* Atribuição + via IA */
 .modal__atribuicao-wrap {
-  border-top: 1px solid var(--color-border);
-  padding-top: 0.75rem;
+  border-top: none;
+  padding-top: 0.25rem;
   position: relative;
 }
 
@@ -394,19 +389,9 @@
 .modal__tooltip--visible { display: block; }
 
 /* EXIF em linha no modo ◫ */
+/* EXIF linha no modo ◫ — escondido: substituído pelo rodapé global */
 .modal__exif-linha {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.4rem 1.25rem;
-  font-family: var(--font-body);
-  font-size: 0.6rem;
-  font-weight: 300;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--color-text-faint);
-  border-top: 1px solid var(--color-border);
-  padding-top: 0.75rem;
-  margin-top: auto;
+  display: none;
 }
 
 .modal__exif-linha a {
@@ -472,28 +457,8 @@
 }
 
 /* Rodapé modo T */
-.modal__rodape-texto {
-  display: flex;
-  align-items: baseline;
-  flex-wrap: wrap;
-  gap: 0.5rem 2rem;
-  margin-top: 2.5rem;
-  padding-top: 1rem;
-  border-top: 1px solid var(--color-border);
-  width: 100%;
-}
-
-.modal__corpo--so-texto .modal__atribuicao-wrap {
-  border-top: none;
-  padding-top: 0;
-  position: static;
-}
-
-.modal__corpo--so-texto .modal__exif-linha {
-  border-top: none;
-  padding-top: 0;
-  margin-top: 0;
-}
+/* Rodapé modo T — substituído pelo rodapé global */
+.modal__rodape-texto { display: none; }
 
 /* ═══════════════════════════════════════════
    LOADER / ERRO / SENTINEL / SKIP LINK
