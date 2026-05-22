@@ -163,12 +163,32 @@
   padding: 0.35rem 0.4rem;
   border-radius: 2px;
   transition: color 0.18s;
-  margin-left: auto;
   flex-shrink: 0;
   user-select: none;
 }
 
 .modal__fechar:hover { color: var(--color-text); }
+
+/* Botão de partilha — mesmo estilo que fechar, antes dele */
+.modal__partilhar {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-text-faint);
+  font-size: 0.95rem;
+  line-height: 1;
+  padding: 0.35rem 0.5rem;
+  border-radius: 2px;
+  transition: color 0.18s;
+  flex-shrink: 0;
+  user-select: none;
+  margin-left: auto;
+}
+
+.modal__partilhar:hover { color: var(--color-text); }
+.modal__partilhar:disabled { opacity: 0.4; cursor: default; }
+
+/* Fechar: sem margin-left auto quando partilha existe (a partilha já empurra para a direita) */
 
 /* ── Corpo do modal ───────────────────────── */
 
@@ -329,7 +349,7 @@
   color: var(--color-text-muted);
   line-height: 1.8;
   white-space: pre-wrap;
-  /* sem flex:1 — permite que elAttrWrap fique colado ao texto */
+  flex: 1;
 }
 
 /* Atribuição + via IA */
