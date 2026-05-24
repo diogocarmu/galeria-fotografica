@@ -136,11 +136,10 @@ html, body {
   .modal__barra-controlos {
     display: flex;
     align-items: center;
+    justify-content: space-between;
   }
 
-  .modal__barra-controlos .modal__fechar {
-    margin-left: auto;
-  }
+  .modal__barra-sep { display: none; }
 }
 
 /* ══════════════════════════════════════════
