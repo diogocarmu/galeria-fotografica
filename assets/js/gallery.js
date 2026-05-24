@@ -479,11 +479,24 @@ function actualizarBotoesIdioma() {
   });
 }
 
+function resolverTitulo(foto, lang) {
+  if (!lang) return foto.titulo || "";
+  const l = lang.toLowerCase();
+  if (l === "pt" && foto.titulo_pt) return foto.titulo_pt;
+  if (l === "en" && foto.titulo_en) return foto.titulo_en;
+  return foto.titulo || "";
+}
+
+function actualizarTitulo() {
+  elBarraTitulo.textContent = resolverTitulo(fotoActiva, idiomaActivo);
+}
+
 function actualizarTextoModoFotoTexto(blocos) {
   const bloco = blocos.find(b => b.lang === idiomaActivo) || blocos[0];
   if (bloco) {
     elTexto.textContent = bloco.texto;
   }
+  actualizarTitulo();
 }
 
 // ══════════════════════════════════════════════════════════════
