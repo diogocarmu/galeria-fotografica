@@ -334,7 +334,7 @@
   font-size: clamp(1rem, 2vw, 1.25rem);
   font-weight: 300;
   font-style: italic;
-  color: var(--color-text-muted);
+  color: var(--color-text);
   line-height: 1.8;
   white-space: pre-wrap;
   /* sem flex:1 — permite que elAttrWrap fique colado ao texto */

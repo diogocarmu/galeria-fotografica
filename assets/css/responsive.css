@@ -140,6 +140,8 @@ html, body {
   }
 
   .modal__barra-sep { display: none; }
+
+  .modal__barra-controlos .modal__fechar { margin-left: 0; }
 }
 
 /* ══════════════════════════════════════════
