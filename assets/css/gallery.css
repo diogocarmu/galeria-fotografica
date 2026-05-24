@@ -171,7 +171,6 @@
   padding: 0.35rem 0.4rem;
   border-radius: 2px;
   transition: color 0.18s;
-  margin-left: auto;
   flex-shrink: 0;
   user-select: none;
 }
