@@ -137,6 +137,7 @@ html, body {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    margin-left: 0;
   }
 
   .modal__barra-sep { display: none; }
