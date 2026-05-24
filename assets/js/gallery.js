@@ -8,6 +8,7 @@
  *   4. Tooltip "via IA" com disclaimer variável por confiança
  *   5. Render em batches via IntersectionObserver
  *   6. Scroll-lock do body quando o modal está aberto
+ *   7. Partilha por link directo via URL hash (#<id>)
  */
 
 "use strict";
@@ -27,6 +28,10 @@ let fotoActiva = null;   // objecto foto actualmente no modal
 let modoActivo = "foto"; // "foto" | "foto-texto" | "texto"
 let idiomaActivo = null; // código do idioma activo no modo ◫
 let blocosActivos = [];  // blocos de texto da foto activa
+
+// ── Hash pendente — foto ainda não renderizada ───────────────
+
+let hashPendente = null; // id de foto a abrir assim que for renderizada
 
 // ── Textos do disclaimer por confiança ───────────────────────
 
@@ -295,7 +300,7 @@ function criarBotaoModo(simbolo, modo, label) {
 // MODAL — abrir / fechar
 // ══════════════════════════════════════════════════════════════
 
-function abrirModal(foto) {
+function abrirModal(foto, modoInicial) {
   fotoActiva = foto;
   const blocos = calcularBlocos(foto);
 
@@ -339,8 +344,11 @@ function abrirModal(foto) {
   idiomaActivo = blocos.length > 0 ? blocos[0].lang : null;
   actualizarTextoModoFotoTexto(blocos);
 
-  // Abre sempre em modo ▢
-  definirModo("foto");
+  // Modo de abertura: parâmetro opcional, senão modo ▢
+  definirModo(modoInicial || "foto");
+
+  // Escrever hash no URL sem criar entrada no histórico
+  history.replaceState(null, "", `#${foto.id}`);
 
   modalEl.classList.add("modal--aberto");
   bloquearScroll();
@@ -354,6 +362,9 @@ function fecharModal() {
   libertarScroll();
   elTooltip.classList.remove("modal__tooltip--visible");
   fotoActiva = null;
+
+  // Limpar hash sem criar entrada no histórico
+  history.replaceState(null, "", window.location.pathname);
 }
 
 // ══════════════════════════════════════════════════════════════
@@ -616,6 +627,11 @@ function renderBatch() {
   if (batch.length === 0) {
     sentinelEl.remove();
     observer.disconnect();
+    // Todos os batches renderizados: se ainda há hash pendente, não existe — limpar
+    if (hashPendente) {
+      hashPendente = null;
+      history.replaceState(null, "", window.location.pathname);
+    }
     return;
   }
 
@@ -623,6 +639,20 @@ function renderBatch() {
   batch.forEach((foto) => fragment.appendChild(criarCartao(foto)));
   galleryEl.appendChild(fragment);
   rendered += batch.length;
+
+  // Verificar se a foto do hash pendente acaba de ser renderizada
+  if (hashPendente) {
+    const cartao = galleryEl.querySelector(`[data-id="${hashPendente}"]`);
+    if (cartao) {
+      const foto = allFotos.find(f => f.id === hashPendente);
+      hashPendente = null;
+      if (foto) {
+        cartao.scrollIntoView({ behavior: "smooth", block: "center" });
+        // Pequeno delay para o scroll assentar antes de abrir o modal
+        setTimeout(() => abrirModal(foto, "foto-texto"), 300);
+      }
+    }
+  }
 }
 
 const observer = new IntersectionObserver(
@@ -651,6 +681,34 @@ document.addEventListener("keydown", (e) => {
   }
 });
 
+// ══════════════════════════════════════════════════════════════
+// HASH — resolução no arranque
+// ══════════════════════════════════════════════════════════════
+
+function resolverHashInicial() {
+  const hash = window.location.hash.slice(1); // retirar o "#"
+  if (!hash) return;
+
+  // Verificar se o id existe em allFotos
+  const foto = allFotos.find(f => f.id === hash);
+  if (!foto) {
+    // Id desconhecido — limpar hash silenciosamente
+    history.replaceState(null, "", window.location.pathname);
+    return;
+  }
+
+  // Verificar se o cartão já está no DOM (primeiro batch)
+  const cartao = galleryEl.querySelector(`[data-id="${hash}"]`);
+  if (cartao) {
+    cartao.scrollIntoView({ behavior: "smooth", block: "center" });
+    setTimeout(() => abrirModal(foto, "foto-texto"), 300);
+  } else {
+    // Foto em batch posterior — registar como pendente
+    // O IntersectionObserver continuará a chamar renderBatch() até a encontrar
+    hashPendente = hash;
+  }
+}
+
 // ── Bootstrap ─────────────────────────────────────────────────
 
 async function iniciarGaleria() {
@@ -669,6 +727,9 @@ async function iniciarGaleria() {
   injectStructuredData(allFotos);
   renderBatch();
   observer.observe(sentinelEl);
+
+  // Resolver hash após o primeiro batch estar no DOM
+  resolverHashInicial();
 }
 
 document.addEventListener("DOMContentLoaded", iniciarGaleria);
