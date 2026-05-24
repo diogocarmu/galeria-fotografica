@@ -1,14 +1,7 @@
 User-agent: *
 Allow: /
 
-# Crawlers de IA (GEO)
-User-agent: GPTBot
-Allow: /
+# Páginas de redirect por foto — não indexar
+Disallow: /foto/
 
-User-agent: ClaudeBot
-Allow: /
-
-User-agent: Google-Extended
-Allow: /
-
-Sitemap: SUBSTITUIR URL GITHUB PAGES/sitemap.xml
+Sitemap: https://diogocarmu.github.io/galeria-fotografica/sitemap.xml
