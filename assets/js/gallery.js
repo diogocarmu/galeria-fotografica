@@ -174,10 +174,14 @@ function construirModal() {
   btnFechar.textContent = "×";
   btnFechar.addEventListener("click", fecharModal);
 
-  barra.appendChild(modos);
-  barra.appendChild(barraSep);
+  const barraControlos = document.createElement("div");
+  barraControlos.className = "modal__barra-controlos";
+  barraControlos.appendChild(modos);
+  barraControlos.appendChild(barraSep);
+  barraControlos.appendChild(btnFechar);
+
   barra.appendChild(elBarraTitulo);
-  barra.appendChild(btnFechar);
+  barra.appendChild(barraControlos);
 
   // ── Rodapé EXIF (modo ▢) — faixa em baixo ───────────────
 

@@ -152,6 +152,14 @@
   min-width: 0;
 }
 
+/* Grupo de controlos (modos + sep + fechar) — lado direito em desktop */
+.modal__barra-controlos {
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
 /* Botão fechar — lado direito */
 .modal__fechar {
   background: none;
