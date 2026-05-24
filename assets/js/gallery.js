@@ -77,17 +77,20 @@ function calcularBlocos(foto) {
 
   const blocos = [];
 
-  if (idioma !== "pt" && idioma !== "en" && textoOR) {
-    blocos.push({ lang: idioma.toUpperCase(), texto: normalizarTexto(textoOR) });
-  }
+  // Bloco original — sempre primeiro
   if (idioma === "pt" && textoOR) {
     blocos.push({ lang: "PT", texto: normalizarTexto(textoOR) });
-  } else if (idioma !== "pt" && textoPT) {
+  } else if (idioma === "en" && textoOR) {
+    blocos.push({ lang: "EN", texto: normalizarTexto(textoOR) });
+  } else if (idioma && textoOR) {
+    blocos.push({ lang: idioma.toUpperCase(), texto: normalizarTexto(textoOR) });
+  }
+
+  // Traduções — PT antes de EN, nunca repetir o original
+  if (idioma !== "pt" && textoPT) {
     blocos.push({ lang: "PT", texto: normalizarTexto(textoPT) });
   }
-  if (idioma === "en" && textoOR) {
-    blocos.push({ lang: "EN", texto: normalizarTexto(textoOR) });
-  } else if (idioma !== "en" && textoEN) {
+  if (idioma !== "en" && textoEN) {
     blocos.push({ lang: "EN", texto: normalizarTexto(textoEN) });
   }
 
