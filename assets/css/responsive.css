@@ -9,39 +9,31 @@ html, body {
 }
 
 /* ══════════════════════════════════════════
-   GRELHA — CSS Grid
+   GRELHA — CSS Columns (contentor principal)
+   Slots fractais usam CSS Grid internamente.
    ══════════════════════════════════════════ */
 
 #gallery {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: var(--gallery-gap, 1px);
+  columns: 1;
+  column-gap: var(--gallery-gap, 1px);
   width: 100%;
   padding: 0;
-  align-items: start;
+  display: block;
 }
 
 .card {
+  break-inside: avoid;
   display: block;
   width: 100%;
+  margin-bottom: var(--gallery-gap, 1px);
   overflow: hidden;
   cursor: pointer;
   background: var(--color-surface);
-  /* aspect-ratio por orientação */
-}
-
-.card--landscape { aspect-ratio: 4 / 3; }
-.card--portrait  { aspect-ratio: 3 / 4; }
-.card--square    { aspect-ratio: 1 / 1; }
-
-.card__face--front {
-  width: 100%;
-  height: 100%;
 }
 
 .card__face--front img {
   width: 100%;
-  height: 100%;
+  height: auto;
   display: block;
   object-fit: cover;
   transition: transform 0.5s ease;
@@ -51,55 +43,65 @@ html, body {
   transform: scale(1.02);
 }
 
-/* ── Slot fractal ─────────────────────────── */
+/* ── Slot fractal — CSS Grid interno ─────── */
 
 .slot-fractal {
+  break-inside: avoid;
   display: grid;
   gap: var(--gallery-gap, 1px);
+  width: 100%;
+  margin-bottom: var(--gallery-gap, 1px);
   overflow: hidden;
 }
 
-/* landscape: 2 fotos lado a lado — slot com aspect-ratio 4/3 */
+/* landscape: 2 fotos lado a lado */
 .slot-fractal--landscape {
   grid-template-columns: 1fr 1fr;
   aspect-ratio: 4 / 3;
 }
 
-/* portrait: 2 fotos empilhadas — slot com aspect-ratio 3/4 */
+/* portrait: 2 fotos empilhadas */
 .slot-fractal--portrait {
   grid-template-columns: 1fr;
   grid-template-rows: 1fr 1fr;
   aspect-ratio: 3 / 4;
 }
 
-/* square: 4 fotos 2x2 — slot com aspect-ratio 1/1 */
+/* square: 4 fotos 2x2 */
 .slot-fractal--square {
   grid-template-columns: 1fr 1fr;
   grid-template-rows: 1fr 1fr;
   aspect-ratio: 1 / 1;
 }
 
+/* Cartões dentro do slot fractal: sem margin, altura controlada pelo Grid */
 .slot-fractal .card {
-  aspect-ratio: unset;
+  margin-bottom: 0;
   width: 100%;
   height: 100%;
   min-height: 0;
 }
 
+.slot-fractal .card__face--front img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
 @media (min-width: 480px) {
-  #gallery { grid-template-columns: repeat(2, 1fr); }
+  #gallery { columns: 2; }
 }
 
 @media (min-width: 768px) {
-  #gallery { grid-template-columns: repeat(3, 1fr); }
+  #gallery { columns: 3; }
 }
 
 @media (min-width: 1200px) {
-  #gallery { grid-template-columns: repeat(3, 1fr); }
+  #gallery { columns: 3; }
 }
 
 @media (min-width: 1600px) {
-  #gallery { grid-template-columns: repeat(4, 1fr); }
+  #gallery { columns: 4; }
 }
 
 /* ══════════════════════════════════════════

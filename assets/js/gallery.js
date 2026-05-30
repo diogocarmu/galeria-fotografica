@@ -46,6 +46,29 @@ const DISCLAIMER = {
   baixa: "Texto seleccionado por IA. A transcrição pode diferir do original.",
 };
 
+// ── Paleta Wim Wenders — cores para cartões verso ────────────
+
+const PALETA_WENDERS = [
+  "azul-noite",
+  "verde-cansado",
+  "cinza-berlim",
+  "roxo-crepusculo",
+  "ocre-quente",
+  "rosa-queimado",
+  "areia-texas",
+  "verde-salvia",
+];
+
+let _ultimaCorVerso = null;
+
+function corVersoAleatoria() {
+  // Evitar repetir a cor imediatamente anterior
+  let candidatos = PALETA_WENDERS.filter(c => c !== _ultimaCorVerso);
+  const cor = candidatos[Math.floor(Math.random() * candidatos.length)];
+  _ultimaCorVerso = cor;
+  return cor;
+}
+
 // ── Utilitários ──────────────────────────────────────────────
 
 function escapeHtml(str) {
@@ -748,15 +771,21 @@ function calcularLayoutGrelha(fotos) {
     i++;
   }
 
-  // Construir o array de entradas
+  // Construir o array de entradas com restrição de adjacência:
+  // nunca dois slots especiais (verso ou fractal) consecutivos.
   const entradas = [];
   let cursor = 0;
 
+  function ultimoEspecial() {
+    if (entradas.length === 0) return false;
+    return entradas[entradas.length - 1].tipo !== "foto";
+  }
+
   while (cursor < total) {
-    if (versoCandidatos.has(cursor)) {
+    if (versoCandidatos.has(cursor) && !ultimoEspecial()) {
       entradas.push({ tipo: "verso", fotos: [fotos[cursor]] });
       cursor++;
-    } else if (fractalCandidatos.has(cursor)) {
+    } else if (fractalCandidatos.has(cursor) && !ultimoEspecial()) {
       const needed = fotasPorFractal(fotos[cursor].orientacao);
       // Recolher `needed` fotos não-verso a partir de cursor
       const subFotos = [];
@@ -790,6 +819,7 @@ function criarCartaoVerso(foto) {
   const article = document.createElement("article");
   article.className  = `card card--verso card--${foto.orientacao}`;
   article.dataset.id = foto.id;
+  article.dataset.versoCor = corVersoAleatoria();
 
   const textoEl = document.createElement("p");
   textoEl.className   = "card__verso-texto";
