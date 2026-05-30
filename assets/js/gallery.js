@@ -470,6 +470,7 @@ function abrirModal(foto, modoInicial) {
 
   modalEl.classList.add("modal--aberto");
   bloquearScroll();
+  esconderCabecalho();
 
   // Foco na cruz para acessibilidade
   modalEl.querySelector(".modal__fechar")?.focus();
@@ -1003,6 +1004,39 @@ function resolverHashInicial() {
 
 // ── Bootstrap ─────────────────────────────────────────────────
 
+// ══════════════════════════════════════════════════════════════
+// CABEÇALHO FLUTUANTE
+// ══════════════════════════════════════════════════════════════
+
+const cabecalhoEl  = document.getElementById("cabecalho");
+const triggerEl    = document.getElementById("cabecalho-trigger");
+
+let _cabecalhoTimeout = null;
+
+function mostrarCabecalho(autoHide = false) {
+  if (modalEl?.classList.contains("modal--aberto")) return;
+  cabecalhoEl.classList.add("cabecalho--visivel");
+  if (autoHide) {
+    if (_cabecalhoTimeout) clearTimeout(_cabecalhoTimeout);
+    _cabecalhoTimeout = setTimeout(() => {
+      cabecalhoEl.classList.remove("cabecalho--visivel");
+      _cabecalhoTimeout = null;
+    }, 4000);
+  }
+}
+
+function esconderCabecalho() {
+  if (_cabecalhoTimeout) clearTimeout(_cabecalhoTimeout);
+  cabecalhoEl.classList.remove("cabecalho--visivel");
+}
+
+// Hover na zona de trigger (80px do topo)
+triggerEl.addEventListener("mouseenter", () => mostrarCabecalho(false));
+triggerEl.addEventListener("mouseleave", () => esconderCabecalho());
+
+// Esconder cabeçalho quando modal abre
+// (integrado em abrirModal e fecharModal via chamada directa)
+
 async function iniciarGaleria() {
   construirModal();
   mostrarLoader(true);
@@ -1022,6 +1056,9 @@ async function iniciarGaleria() {
   injectStructuredData(allFotos);
   renderBatch();
   observer.observe(sentinelEl);
+
+  // Cabeçalho: aparecer ao carregar, desaparecer após 4s
+  mostrarCabecalho(true);
 
   // Resolver hash após o primeiro batch estar no DOM
   resolverHashInicial();

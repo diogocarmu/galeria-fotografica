@@ -521,10 +521,10 @@
   background: none;
   border: none;
   cursor: pointer;
-  color: var(--color-text-faint);
-  font-size: 0.85rem;
+  color: var(--color-accent);
+  font-size: 1.1rem;
   line-height: 1;
-  padding: 0.2rem 0.3rem;
+  padding: 0.35rem 0.55rem;
   border-radius: 2px;
   transition: color 0.18s;
   margin-left: auto;
@@ -533,7 +533,7 @@
   letter-spacing: 0;
 }
 
-.modal__partilha-btn:hover { color: var(--color-text-muted); }
+.modal__partilha-btn:hover { color: var(--color-text); }
 
 /* ── Menu flutuante de partilha ─────────────────────────────── */
 
@@ -691,11 +691,71 @@
   opacity: 0.75;
 }
 
+/* ═══════════════════════════════════════════
+   CABEÇALHO FLUTUANTE
+   ═══════════════════════════════════════════ */
+
+#cabecalho {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 900;
+  padding: clamp(1rem, 3vw, 1.75rem) clamp(1rem, 4vw, 2.5rem);
+  background: linear-gradient(
+    to bottom,
+    rgba(10, 10, 10, 0.92) 0%,
+    rgba(10, 10, 10, 0) 100%
+  );
+  backdrop-filter: blur(0px);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+#cabecalho.cabecalho--visivel {
+  opacity: 1;
+  pointer-events: none;
+}
+
+#cabecalho h1 {
+  font-family: var(--font-titulo);
+  font-size: clamp(1.1rem, 2.5vw, 1.6rem);
+  font-weight: 400;
+  font-style: normal;
+  color: var(--color-text);
+  letter-spacing: 0.06em;
+  margin: 0 0 0.3rem 0;
+}
+
+#cabecalho p {
+  font-family: var(--font-display);
+  font-size: clamp(0.75rem, 1.3vw, 0.95rem);
+  font-weight: 300;
+  font-style: italic;
+  color: var(--color-text-muted);
+  letter-spacing: 0.02em;
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* Zona de hover — faixa invisível no topo da página */
+#cabecalho-trigger {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 80px;
+  z-index: 899;
+  pointer-events: all;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .modal { transition: none; }
   .modal__modo-btn--nudge { animation: none; }
   .modal__idioma-btn--nudge { animation: none; }
   .card--verso .card__verso-conteudo { transition: none; }
+  #cabecalho { transition: none; }
   #loader { animation: none; }
 }
 
