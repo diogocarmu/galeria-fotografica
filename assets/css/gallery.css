@@ -576,9 +576,8 @@
 }
 
 /* ═══════════════════════════════════════════
-   CARTÃO VERSO — paleta Wim Wenders
-   Cores atribuídas via data-verso-cor em JS.
-   Contraste garantido: fundos escuros → texto claro; fundos claros → texto escuro.
+   CARTÃO VERSO — paleta de cores com contraste máximo
+   Pares fundo/texto garantem legibilidade em todos os casos.
    ═══════════════════════════════════════════ */
 
 .card--verso {
@@ -589,51 +588,54 @@
   cursor: pointer;
   position: relative;
   overflow: hidden;
-  /* background e color injectados via atributo data-verso-cor */
+  aspect-ratio: 1 / 1;
+  break-inside: avoid;
+  margin-bottom: var(--gallery-gap, 1px);
 }
 
-/* Fundos escuros da paleta Wenders */
-.card--verso[data-verso-cor="azul-noite"] {
-  background: #1c2b3a;
-  --verso-text: #d4cfc4;
-  --verso-attr: #8a9aaa;
+.card--verso[data-verso-cor="vermelho-tenenbaum"] {
+  background: #A31F3F;
+  --verso-text: #F5F0E8;
+  --verso-attr: #d4a8b8;
+  --verso-titulo: #F5F0E8;
 }
-.card--verso[data-verso-cor="verde-cansado"] {
-  background: #2a3328;
-  --verso-text: #cdd4c0;
-  --verso-attr: #7a8f72;
+.card--verso[data-verso-cor="amarelo-linha"] {
+  background: #E6B800;
+  --verso-text: #1a1200;
+  --verso-attr: #3a2c00;
+  --verso-titulo: #1a1200;
 }
-.card--verso[data-verso-cor="cinza-berlim"] {
-  background: #2e2e32;
-  --verso-text: #ddd8d0;
-  --verso-attr: #8a8880;
+.card--verso[data-verso-cor="azul-marinho"] {
+  background: #23395B;
+  --verso-text: #F5F0E8;
+  --verso-attr: #a8b8d0;
+  --verso-titulo: #F5F0E8;
 }
-.card--verso[data-verso-cor="roxo-crepusculo"] {
-  background: #2d2040;
-  --verso-text: #d8d0e8;
-  --verso-attr: #8878a8;
+.card--verso[data-verso-cor="verde-escutismo"] {
+  background: #548C6B;
+  --verso-text: #F5F0E8;
+  --verso-attr: #c0d8c8;
+  --verso-titulo: #F5F0E8;
+}
+.card--verso[data-verso-cor="rosa-pastel"] {
+  background: #E49F6A;
+  --verso-text: #1a0800;
+  --verso-attr: #3a1800;
+  --verso-titulo: #1a0800;
 }
 
-/* Fundos claros da paleta Wenders */
-.card--verso[data-verso-cor="ocre-quente"] {
-  background: #c8a96e;
-  --verso-text: #1a1208;
-  --verso-attr: #3a2a10;
-}
-.card--verso[data-verso-cor="rosa-queimado"] {
-  background: #c4857a;
-  --verso-text: #180808;
-  --verso-attr: #3a1010;
-}
-.card--verso[data-verso-cor="areia-texas"] {
-  background: #d4c4a0;
-  --verso-text: #1c1408;
-  --verso-attr: #3a2c10;
-}
-.card--verso[data-verso-cor="verde-salvia"] {
-  background: #a8b890;
-  --verso-text: #101808;
-  --verso-attr: #283810;
+.card__verso-titulo {
+  font-family: var(--font-titulo);
+  font-size: clamp(0.75rem, 1.3vw, 1rem);
+  font-weight: 500;
+  font-style: normal;
+  color: var(--verso-titulo, var(--color-text));
+  letter-spacing: 0.04em;
+  margin-bottom: 0.6rem;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  opacity: 0.7;
 }
 
 .card__verso-texto {
@@ -646,7 +648,7 @@
   white-space: pre-wrap;
   overflow: hidden;
   display: -webkit-box;
-  -webkit-line-clamp: 6;
+  -webkit-line-clamp: 5;
   -webkit-box-orient: vertical;
 }
 

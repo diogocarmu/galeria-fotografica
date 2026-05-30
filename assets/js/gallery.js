@@ -49,14 +49,11 @@ const DISCLAIMER = {
 // ── Paleta Wim Wenders — cores para cartões verso ────────────
 
 const PALETA_WENDERS = [
-  "azul-noite",
-  "verde-cansado",
-  "cinza-berlim",
-  "roxo-crepusculo",
-  "ocre-quente",
-  "rosa-queimado",
-  "areia-texas",
-  "verde-salvia",
+  "vermelho-tenenbaum",
+  "amarelo-linha",
+  "azul-marinho",
+  "verde-escutismo",
+  "rosa-pastel",
 ];
 
 let _ultimaCorVerso = null;
@@ -817,9 +814,17 @@ function calcularLayoutGrelha(fotos) {
 
 function criarCartaoVerso(foto) {
   const article = document.createElement("article");
-  article.className  = `card card--verso card--${foto.orientacao}`;
+  article.className  = `card card--verso`;
   article.dataset.id = foto.id;
   article.dataset.versoCor = corVersoAleatoria();
+
+  // Título
+  if (foto.titulo) {
+    const tituloEl = document.createElement("p");
+    tituloEl.className   = "card__verso-titulo";
+    tituloEl.textContent = foto.titulo_pt || foto.titulo || "";
+    article.appendChild(tituloEl);
+  }
 
   const textoEl = document.createElement("p");
   textoEl.className   = "card__verso-texto";

@@ -54,37 +54,32 @@ html, body {
   overflow: hidden;
 }
 
-/* landscape: 2 fotos lado a lado */
+/* landscape: 2 fotos lado a lado — altura natural da imagem */
 .slot-fractal--landscape {
   grid-template-columns: 1fr 1fr;
-  aspect-ratio: 4 / 3;
 }
 
-/* portrait: 2 fotos empilhadas */
+/* portrait: 2 fotos empilhadas — altura natural da imagem */
 .slot-fractal--portrait {
   grid-template-columns: 1fr;
-  grid-template-rows: 1fr 1fr;
-  aspect-ratio: 3 / 4;
 }
 
 /* square: 4 fotos 2x2 */
 .slot-fractal--square {
   grid-template-columns: 1fr 1fr;
-  grid-template-rows: 1fr 1fr;
-  aspect-ratio: 1 / 1;
 }
 
-/* Cartões dentro do slot fractal: sem margin, altura controlada pelo Grid */
+/* Cartões dentro do slot fractal: sem margin, imagem a 100% */
 .slot-fractal .card {
   margin-bottom: 0;
   width: 100%;
-  height: 100%;
   min-height: 0;
 }
 
 .slot-fractal .card__face--front img {
   width: 100%;
-  height: 100%;
+  height: auto;
+  display: block;
   object-fit: cover;
 }
 
