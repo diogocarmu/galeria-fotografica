@@ -576,48 +576,72 @@
 }
 
 /* ═══════════════════════════════════════════
-   CARTÃO VERSO — paleta de cores com contraste máximo
-   Pares fundo/texto garantem legibilidade em todos os casos.
+   CARTÃO VERSO — foto de fundo + conteúdo deslizante
+   Hover desloca conteúdo para baixo, revelando foto em cima.
    ═══════════════════════════════════════════ */
 
 .card--verso {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding: clamp(1.25rem, 3vw, 2.25rem);
-  cursor: pointer;
   position: relative;
   overflow: hidden;
   aspect-ratio: 1 / 1;
   break-inside: avoid;
   margin-bottom: var(--gallery-gap, 1px);
+  cursor: pointer;
 }
 
-.card--verso[data-verso-cor="vermelho-tenenbaum"] {
+/* Foto de fundo — ocupa 100% do cartão, sempre visível */
+.card--verso .card__verso-foto {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  z-index: 0;
+}
+
+/* Camada de cor + conteúdo — cobre a foto por defeito, desliza para baixo no hover */
+.card--verso .card__verso-conteudo {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: clamp(1.25rem, 3vw, 2.25rem);
+  transform: translateY(0);
+  transition: transform 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card--verso:hover .card__verso-conteudo {
+  transform: translateY(80%);
+}
+
+.card--verso[data-verso-cor="vermelho-tenenbaum"] .card__verso-conteudo {
   background: #A31F3F;
   --verso-text: #F5F0E8;
   --verso-attr: #d4a8b8;
   --verso-titulo: #F5F0E8;
 }
-.card--verso[data-verso-cor="amarelo-linha"] {
+.card--verso[data-verso-cor="amarelo-linha"] .card__verso-conteudo {
   background: #E6B800;
   --verso-text: #1a1200;
   --verso-attr: #3a2c00;
   --verso-titulo: #1a1200;
 }
-.card--verso[data-verso-cor="azul-marinho"] {
+.card--verso[data-verso-cor="azul-marinho"] .card__verso-conteudo {
   background: #23395B;
   --verso-text: #F5F0E8;
   --verso-attr: #a8b8d0;
   --verso-titulo: #F5F0E8;
 }
-.card--verso[data-verso-cor="verde-escutismo"] {
+.card--verso[data-verso-cor="verde-escutismo"] .card__verso-conteudo {
   background: #548C6B;
   --verso-text: #F5F0E8;
   --verso-attr: #c0d8c8;
   --verso-titulo: #F5F0E8;
 }
-.card--verso[data-verso-cor="rosa-pastel"] {
+.card--verso[data-verso-cor="rosa-pastel"] .card__verso-conteudo {
   background: #E49F6A;
   --verso-text: #1a0800;
   --verso-attr: #3a1800;
@@ -626,21 +650,21 @@
 
 .card__verso-titulo {
   font-family: var(--font-titulo);
-  font-size: clamp(0.75rem, 1.3vw, 1rem);
+  font-size: clamp(0.95rem, 1.8vw, 1.3rem);
   font-weight: 500;
   font-style: normal;
   color: var(--verso-titulo, var(--color-text));
-  letter-spacing: 0.04em;
-  margin-bottom: 0.6rem;
+  letter-spacing: 0.03em;
+  margin-bottom: 0.75rem;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-  opacity: 0.7;
+  opacity: 0.85;
 }
 
 .card__verso-texto {
   font-family: var(--font-display);
-  font-size: clamp(0.8rem, 1.4vw, 1.05rem);
+  font-size: clamp(1rem, 1.8vw, 1.3rem);
   font-weight: 300;
   font-style: italic;
   color: var(--verso-text, var(--color-text));
@@ -653,9 +677,9 @@
 }
 
 .card__verso-attr {
-  margin-top: 0.75rem;
+  margin-top: 0.85rem;
   font-family: var(--font-body);
-  font-size: 0.65rem;
+  font-size: 0.78rem;
   font-weight: 300;
   color: var(--verso-attr, var(--color-text-faint));
   letter-spacing: 0.08em;
@@ -667,28 +691,11 @@
   opacity: 0.75;
 }
 
-/* Nudge — translação vertical subtil + opacidade */
-@keyframes verso-nudge {
-  0%   { transform: translateY(0);    opacity: 1; }
-  45%  { transform: translateY(-4px); opacity: 0.82; }
-  100% { transform: translateY(0);    opacity: 1; }
-}
-
-.card--verso {
-  animation: verso-nudge 3.5s ease-in-out infinite;
-}
-
-.card--verso:hover {
-  animation: none;
-  transform: translateY(0);
-  opacity: 1;
-}
-
 @media (prefers-reduced-motion: reduce) {
   .modal { transition: none; }
   .modal__modo-btn--nudge { animation: none; }
   .modal__idioma-btn--nudge { animation: none; }
-  .card--verso { animation: none; }
+  .card--verso .card__verso-conteudo { transition: none; }
   #loader { animation: none; }
 }
 

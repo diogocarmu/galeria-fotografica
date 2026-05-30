@@ -56,13 +56,11 @@ const PALETA_WENDERS = [
   "rosa-pastel",
 ];
 
-let _ultimaCorVerso = null;
+let _indicePaletaVerso = 0;
 
-function corVersoAleatoria() {
-  // Evitar repetir a cor imediatamente anterior
-  let candidatos = PALETA_WENDERS.filter(c => c !== _ultimaCorVerso);
-  const cor = candidatos[Math.floor(Math.random() * candidatos.length)];
-  _ultimaCorVerso = cor;
+function corVersoPróxima() {
+  const cor = PALETA_WENDERS[_indicePaletaVerso % PALETA_WENDERS.length];
+  _indicePaletaVerso++;
   return cor;
 }
 
@@ -773,18 +771,17 @@ function calcularLayoutGrelha(fotos) {
   const entradas = [];
   let cursor = 0;
 
-  function ultimoEspecial() {
-    if (entradas.length === 0) return false;
-    return entradas[entradas.length - 1].tipo !== "foto";
+  function ultimoTipo() {
+    if (entradas.length === 0) return null;
+    return entradas[entradas.length - 1].tipo;
   }
 
   while (cursor < total) {
-    if (versoCandidatos.has(cursor) && !ultimoEspecial()) {
+    if (versoCandidatos.has(cursor) && ultimoTipo() !== "verso") {
       entradas.push({ tipo: "verso", fotos: [fotos[cursor]] });
       cursor++;
-    } else if (fractalCandidatos.has(cursor) && !ultimoEspecial()) {
+    } else if (fractalCandidatos.has(cursor) && ultimoTipo() !== "fractal") {
       const needed = fotasPorFractal(fotos[cursor].orientacao);
-      // Recolher `needed` fotos não-verso a partir de cursor
       const subFotos = [];
       let j = cursor;
       while (subFotos.length < needed && j < total) {
@@ -795,7 +792,6 @@ function calcularLayoutGrelha(fotos) {
         entradas.push({ tipo: "fractal", fotos: subFotos, orientacao: fotos[cursor].orientacao });
         cursor = j;
       } else {
-        // Fotos insuficientes — degradar para cartão normal
         entradas.push({ tipo: "foto", fotos: [fotos[cursor]] });
         cursor++;
       }
@@ -814,33 +810,45 @@ function calcularLayoutGrelha(fotos) {
 
 function criarCartaoVerso(foto) {
   const article = document.createElement("article");
-  article.className  = `card card--verso`;
+  article.className  = "card card--verso";
   article.dataset.id = foto.id;
-  article.dataset.versoCor = corVersoAleatoria();
+  article.dataset.versoCor = corVersoPróxima();
 
-  // Título
+  // Foto de fundo — sempre presente, revelada no hover
+  const fotoEl = document.createElement("img");
+  fotoEl.className   = "card__verso-foto";
+  fotoEl.src         = foto.url_imagem;
+  fotoEl.alt         = "";
+  fotoEl.loading     = "lazy";
+  fotoEl.decoding    = "async";
+  article.appendChild(fotoEl);
+
+  // Camada de conteúdo textual
+  const conteudo = document.createElement("div");
+  conteudo.className = "card__verso-conteudo";
+
+  // Título no idioma original (foto.titulo)
   if (foto.titulo) {
     const tituloEl = document.createElement("p");
     tituloEl.className   = "card__verso-titulo";
-    tituloEl.textContent = foto.titulo_pt || foto.titulo || "";
-    article.appendChild(tituloEl);
+    tituloEl.textContent = foto.titulo;
+    conteudo.appendChild(tituloEl);
   }
 
   const textoEl = document.createElement("p");
   textoEl.className   = "card__verso-texto";
   textoEl.textContent = normalizarTexto(foto.texto_editorial || "");
-
-  const attrEl = document.createElement("p");
-  attrEl.className = "card__verso-attr";
+  conteudo.appendChild(textoEl);
 
   if (foto.autor_texto) {
+    const attrEl = document.createElement("p");
+    attrEl.className = "card__verso-attr";
     const ano = foto.ano_texto ? `, ${foto.ano_texto}` : "";
     attrEl.innerHTML = `<em>${escapeHtml(foto.autor_texto)}</em>${escapeHtml(ano)}`;
+    conteudo.appendChild(attrEl);
   }
 
-  article.appendChild(textoEl);
-  if (foto.autor_texto) article.appendChild(attrEl);
-
+  article.appendChild(conteudo);
   article.addEventListener("click", () => abrirModal(foto, "foto-texto"));
 
   return article;
