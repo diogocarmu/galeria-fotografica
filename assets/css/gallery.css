@@ -729,6 +729,7 @@
   margin: 0;
   white-space: nowrap;
   flex-shrink: 0;
+  line-height: var(--modal-barra-h);
 }
 
 #cabecalho .cabecalho-sep {
@@ -740,15 +741,23 @@
 
 #cabecalho p {
   font-family: var(--font-display);
-  font-size: 0.78rem;
+  font-size: 0.9rem;
   font-weight: 300;
   font-style: italic;
-  color: var(--color-text-muted);
+  color: rgba(232, 232, 232, 0.65);
   letter-spacing: 0.01em;
   margin: 0;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  line-height: var(--modal-barra-h);
+}
+
+@media (max-width: 767px) {
+  #cabecalho .cabecalho-sep,
+  #cabecalho p {
+    display: none;
+  }
 }
 
 /* Zona de hover — faixa invisível no topo da página */
