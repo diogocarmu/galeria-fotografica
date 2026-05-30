@@ -9,32 +9,41 @@ html, body {
 }
 
 /* ══════════════════════════════════════════
-   GRELHA — CSS Columns
+   GRELHA — CSS Grid
    ══════════════════════════════════════════ */
 
 #gallery {
-  columns: 1;
-  column-gap: var(--gallery-gap, 1px);
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--gallery-gap, 1px);
   width: 100%;
   padding: 0;
-  display: block;
+  align-items: start;
 }
 
 .card {
-  break-inside: avoid;
   display: block;
   width: 100%;
-  margin-bottom: var(--gallery-gap, 1px);
   overflow: hidden;
   cursor: pointer;
   background: var(--color-surface);
+  /* aspect-ratio por orientação */
+}
+
+.card--landscape { aspect-ratio: 4 / 3; }
+.card--portrait  { aspect-ratio: 3 / 4; }
+.card--square    { aspect-ratio: 1 / 1; }
+
+.card__face--front {
+  width: 100%;
+  height: 100%;
 }
 
 .card__face--front img {
   width: 100%;
-  height: auto;
+  height: 100%;
   display: block;
-  object-fit: unset;
+  object-fit: cover;
   transition: transform 0.5s ease;
 }
 
@@ -42,20 +51,55 @@ html, body {
   transform: scale(1.02);
 }
 
+/* ── Slot fractal ─────────────────────────── */
+
+.slot-fractal {
+  display: grid;
+  gap: var(--gallery-gap, 1px);
+  overflow: hidden;
+}
+
+/* landscape: 2 fotos lado a lado — slot com aspect-ratio 4/3 */
+.slot-fractal--landscape {
+  grid-template-columns: 1fr 1fr;
+  aspect-ratio: 4 / 3;
+}
+
+/* portrait: 2 fotos empilhadas — slot com aspect-ratio 3/4 */
+.slot-fractal--portrait {
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr 1fr;
+  aspect-ratio: 3 / 4;
+}
+
+/* square: 4 fotos 2x2 — slot com aspect-ratio 1/1 */
+.slot-fractal--square {
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  aspect-ratio: 1 / 1;
+}
+
+.slot-fractal .card {
+  aspect-ratio: unset;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+}
+
 @media (min-width: 480px) {
-  #gallery { columns: 2; }
+  #gallery { grid-template-columns: repeat(2, 1fr); }
 }
 
 @media (min-width: 768px) {
-  #gallery { columns: 3; }
+  #gallery { grid-template-columns: repeat(3, 1fr); }
 }
 
 @media (min-width: 1200px) {
-  #gallery { columns: 3; }
+  #gallery { grid-template-columns: repeat(3, 1fr); }
 }
 
 @media (min-width: 1600px) {
-  #gallery { columns: 4; }
+  #gallery { grid-template-columns: repeat(4, 1fr); }
 }
 
 /* ══════════════════════════════════════════

@@ -2,13 +2,14 @@
  * gallery.js — Render de cartões, scroll infinito e modal lightbox.
  *
  * Responsabilidades:
- *   1. Construir cartões DOM (só frente — sem verso)
- *   2. Modal com 3 modos: ▢ (só foto) · ◫ (foto + texto) · T (só texto)
- *   3. Selector de idioma no modo ◫
- *   4. Tooltip "via IA" com disclaimer variável por confiança
- *   5. Render em batches via IntersectionObserver
- *   6. Scroll-lock do body quando o modal está aberto
- *   7. Partilha por link directo via URL hash (#<id>)
+ *   1. Construir cartões DOM: frente (foto), verso (texto) e slots fractais
+ *   2. Layout de grelha: 30% verso, 30% fractal (calculado antes do render)
+ *   3. Modal com 3 modos: ▢ (só foto) · ◫ (foto + texto) · T (só texto)
+ *   4. Selector de idioma no modo ◫
+ *   5. Tooltip "via IA" com disclaimer variável por confiança
+ *   6. Render em batches via IntersectionObserver
+ *   7. Scroll-lock do body quando o modal está aberto
+ *   8. Partilha por link directo via URL hash (#<id>)
  */
 
 "use strict";
@@ -28,6 +29,10 @@ let fotoActiva = null;   // objecto foto actualmente no modal
 let modoActivo = "foto"; // "foto" | "foto-texto" | "texto"
 let idiomaActivo = null; // código do idioma activo no modo ◫
 let blocosActivos = [];  // blocos de texto da foto activa
+
+// Layout pré-calculado: array de entradas consumidas pelo renderBatch
+// Cada entrada: { tipo: "foto"|"verso"|"fractal", fotos: [...] }
+let layoutGrelha = [];
 
 // ── Hash pendente — foto ainda não renderizada ───────────────
 
@@ -439,8 +444,8 @@ function abrirModal(foto, modoInicial) {
   idiomaActivo = blocos.length > 0 ? blocos[0].lang : null;
   actualizarTextoModoFotoTexto(blocos);
 
-  // Modo de abertura: parâmetro opcional, senão modo ▢
-  definirModo(modoInicial || "foto");
+  // Modo de abertura: parâmetro opcional, senão modo ◫
+  definirModo(modoInicial || "foto-texto");
 
   // Escrever hash no URL sem criar entrada no histórico
   history.replaceState(null, "", `#${foto.id}`);
@@ -687,6 +692,142 @@ function preencherExif(container, foto, overlay) {
 }
 
 // ══════════════════════════════════════════════════════════════
+// LAYOUT DA GRELHA — pré-cálculo antes do primeiro render
+// ══════════════════════════════════════════════════════════════
+
+// Quantas fotos consome um slot fractal conforme orientação
+function fotasPorFractal(orientacao) {
+  return orientacao === "square" ? 4 : 2;
+}
+
+// Constrói o array de entradas que os batches vão consumir.
+// Garante: máx 30% verso · máx 30% fractal · nunca coincidem.
+// Fotos com texto em falta não são elegíveis para verso.
+function calcularLayoutGrelha(fotos) {
+  const total = fotos.length;
+  const maxVerso   = Math.floor(total * 0.30);
+  const maxFractal = Math.floor(total * 0.30);
+
+  // Índices elegíveis para verso (têm texto literário)
+  const elegiveisVerso = fotos
+    .map((f, i) => (f.texto_editorial ? i : -1))
+    .filter(i => i >= 0);
+
+  // Embaralhar elegíveis para distribuição aleatória
+  function shuffleIndices(arr) {
+    const a = [...arr];
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
+  const versoCandidatos  = new Set(shuffleIndices(elegiveisVerso).slice(0, maxVerso));
+  const fractalCandidatos = new Set();
+
+  // Seleccionar candidatos fractais: não podem ser verso
+  // e têm de ter fotos suficientes disponíveis à frente no array
+  let contadorFractal = 0;
+  let i = 0;
+  while (i < total && contadorFractal < maxFractal) {
+    if (!versoCandidatos.has(i)) {
+      const needed = fotasPorFractal(fotos[i].orientacao);
+      // Verificar se há fotos não-verso suficientes a partir de i
+      let disponíveis = 0;
+      for (let j = i; j < total && disponíveis < needed; j++) {
+        if (!versoCandidatos.has(j)) disponíveis++;
+      }
+      if (disponíveis >= needed && Math.random() < 0.35) {
+        fractalCandidatos.add(i);
+        contadorFractal++;
+        i += needed; // saltar as fotos que este slot vai consumir
+        continue;
+      }
+    }
+    i++;
+  }
+
+  // Construir o array de entradas
+  const entradas = [];
+  let cursor = 0;
+
+  while (cursor < total) {
+    if (versoCandidatos.has(cursor)) {
+      entradas.push({ tipo: "verso", fotos: [fotos[cursor]] });
+      cursor++;
+    } else if (fractalCandidatos.has(cursor)) {
+      const needed = fotasPorFractal(fotos[cursor].orientacao);
+      // Recolher `needed` fotos não-verso a partir de cursor
+      const subFotos = [];
+      let j = cursor;
+      while (subFotos.length < needed && j < total) {
+        if (!versoCandidatos.has(j)) subFotos.push(fotos[j]);
+        j++;
+      }
+      if (subFotos.length === needed) {
+        entradas.push({ tipo: "fractal", fotos: subFotos, orientacao: fotos[cursor].orientacao });
+        cursor = j;
+      } else {
+        // Fotos insuficientes — degradar para cartão normal
+        entradas.push({ tipo: "foto", fotos: [fotos[cursor]] });
+        cursor++;
+      }
+    } else {
+      entradas.push({ tipo: "foto", fotos: [fotos[cursor]] });
+      cursor++;
+    }
+  }
+
+  return entradas;
+}
+
+// ══════════════════════════════════════════════════════════════
+// CARTÃO VERSO — construção
+// ══════════════════════════════════════════════════════════════
+
+function criarCartaoVerso(foto) {
+  const article = document.createElement("article");
+  article.className  = `card card--verso card--${foto.orientacao}`;
+  article.dataset.id = foto.id;
+
+  const textoEl = document.createElement("p");
+  textoEl.className   = "card__verso-texto";
+  textoEl.textContent = normalizarTexto(foto.texto_editorial || "");
+
+  const attrEl = document.createElement("p");
+  attrEl.className = "card__verso-attr";
+
+  if (foto.autor_texto) {
+    const ano = foto.ano_texto ? `, ${foto.ano_texto}` : "";
+    attrEl.innerHTML = `<em>${escapeHtml(foto.autor_texto)}</em>${escapeHtml(ano)}`;
+  }
+
+  article.appendChild(textoEl);
+  if (foto.autor_texto) article.appendChild(attrEl);
+
+  article.addEventListener("click", () => abrirModal(foto, "foto-texto"));
+
+  return article;
+}
+
+// ══════════════════════════════════════════════════════════════
+// SLOT FRACTAL — construção
+// ══════════════════════════════════════════════════════════════
+
+function criarSlotFractal(subFotos, orientacao) {
+  const slot = document.createElement("div");
+  slot.className = `slot-fractal slot-fractal--${orientacao}`;
+
+  subFotos.forEach((foto) => {
+    const cartao = criarCartao(foto);
+    slot.appendChild(cartao);
+  });
+
+  return slot;
+}
+
+// ══════════════════════════════════════════════════════════════
 // CARTÃO — construção (só frente)
 // ══════════════════════════════════════════════════════════════
 
@@ -718,7 +859,7 @@ function criarCartao(foto) {
 // ══════════════════════════════════════════════════════════════
 
 function renderBatch() {
-  const batch = allFotos.slice(rendered, rendered + CONFIG.BATCH_SIZE);
+  const batch = layoutGrelha.slice(rendered, rendered + CONFIG.BATCH_SIZE);
 
   if (batch.length === 0) {
     sentinelEl.remove();
@@ -732,7 +873,19 @@ function renderBatch() {
   }
 
   const fragment = document.createDocumentFragment();
-  batch.forEach((foto) => fragment.appendChild(criarCartao(foto)));
+
+  batch.forEach((entrada) => {
+    let el;
+    if (entrada.tipo === "verso") {
+      el = criarCartaoVerso(entrada.fotos[0]);
+    } else if (entrada.tipo === "fractal") {
+      el = criarSlotFractal(entrada.fotos, entrada.orientacao);
+    } else {
+      el = criarCartao(entrada.fotos[0]);
+    }
+    fragment.appendChild(el);
+  });
+
   galleryEl.appendChild(fragment);
   rendered += batch.length;
 
@@ -818,6 +971,9 @@ async function iniciarGaleria() {
     mostrarErro("Não foi possível carregar a galeria. Tenta novamente mais tarde.");
     return;
   }
+
+  // Pré-calcular layout (verso + fractal) antes do primeiro render
+  layoutGrelha = calcularLayoutGrelha(allFotos);
 
   mostrarLoader(false);
   injectStructuredData(allFotos);

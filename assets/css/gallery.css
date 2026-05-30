@@ -521,8 +521,8 @@
   background: none;
   border: none;
   cursor: pointer;
-  color: var(--color-accent);
-  font-size: 1.1rem;
+  color: var(--color-text-faint);
+  font-size: 0.85rem;
   line-height: 1;
   padding: 0.2rem 0.3rem;
   border-radius: 2px;
@@ -575,9 +575,81 @@
   background: rgba(255,255,255,0.04);
 }
 
+/* ═══════════════════════════════════════════
+   CARTÃO VERSO
+   ═══════════════════════════════════════════ */
+
+.card--verso {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: clamp(1rem, 3vw, 2rem);
+  background: var(--color-surface);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Linha decorativa à esquerda */
+.card--verso::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 15%;
+  bottom: 15%;
+  width: 1px;
+  background: var(--color-accent);
+  opacity: 0.4;
+}
+
+.card__verso-texto {
+  font-family: var(--font-display);
+  font-size: clamp(0.8rem, 1.4vw, 1.05rem);
+  font-weight: 300;
+  font-style: italic;
+  color: var(--color-text);
+  line-height: 1.7;
+  white-space: pre-wrap;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 6;
+  -webkit-box-orient: vertical;
+}
+
+.card__verso-attr {
+  margin-top: 0.75rem;
+  font-family: var(--font-body);
+  font-size: 0.65rem;
+  font-weight: 300;
+  color: var(--color-text-faint);
+  letter-spacing: 0.08em;
+}
+
+.card__verso-attr em {
+  font-style: normal;
+  color: var(--color-text-muted);
+}
+
+/* Nudge — pulso suave e contínuo na opacidade */
+@keyframes verso-nudge {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.6; }
+}
+
+.card--verso {
+  animation: verso-nudge 4s ease-in-out infinite;
+}
+
+.card--verso:hover {
+  animation: none;
+  opacity: 1;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .modal { transition: none; }
   .modal__modo-btn--nudge { animation: none; }
   .modal__idioma-btn--nudge { animation: none; }
+  .card--verso { animation: none; }
   #loader { animation: none; }
 }
+
