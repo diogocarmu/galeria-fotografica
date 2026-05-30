@@ -32,13 +32,15 @@ GitHub Pages            ← site estático
 galeria-fotografica/
 │
 ├── index.html              # Shell estático — SEO, Open Graph, JSON-LD
-├── sitemap.xml             # Gerado e commitado automaticamente pelo GAS
+├── sitemap.xml             # Gerado e commitado automaticamente pelo GAS via GitHub API
 ├── robots.txt              # Permite crawl total; bloqueia /foto/ a crawlers
 │
-├── foto/                   # Páginas de redirect por foto (geradas pelo GAS)
+├── foto/                   # Páginas de redirect por foto (geradas pelo GAS via GitHub API)
 │   └── <id>.html           # Redirect + Open Graph para partilha em redes sociais
 │
 └── assets/
+    ├── img/
+    │   └── preview.jpg     # Imagem de preview para Open Graph do site (1200×630px)
     ├── css/
     │   ├── reset.css       # Reset global, scrollbar oculta
     │   ├── gallery.css     # Tokens, cartões, modal lightbox, cartões verso, cabeçalho
@@ -236,7 +238,9 @@ No Google Sheets → menu **Galeria → ✓ Publicar seleccionadas** ou **✕ De
 
 No Google Sheets → menu **Galeria → ↻ Gerar sitemap.xml**
 
-Faz commit directo para o repositório — não é necessário push manual.
+O GAS lê todas as fotos publicadas, gera o `sitemap.xml` e faz commit directamente no repositório via GitHub API — não é necessário fazer mais nada. O sitemap fica disponível em segundos.
+
+Quando usar: após corrigir textos em falta (o sitemap inclui os títulos das fotos), ou após publicar/despublicar fotos fora do pipeline automático.
 
 ### Corrigir textos em falta
 
@@ -283,7 +287,7 @@ BATCH_SIZE: 20  // Fotos carregadas por batch no scroll infinito
 
 ---
 
-## Débitos Conhecidos
+## Pendências Conhecidas
 
 - **Clasp+TS:** os ficheiros GAS não estão no Git. Migrar para Clasp para ter histórico de versões e edição local.
 - **Notificação de lote:** sem notificação quando o processamento diário termina.
