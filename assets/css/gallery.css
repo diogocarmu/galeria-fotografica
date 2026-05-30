@@ -782,3 +782,162 @@
   #loader { animation: none; }
 }
 
+/* ═══════════════════════════════════════════
+   BOTÃO ⓘ — barra superior do modal
+   ═══════════════════════════════════════════ */
+
+.modal__info-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-text-faint);
+  font-size: 1rem;
+  line-height: 1;
+  padding: 0.35rem 0.55rem;
+  border-radius: 2px;
+  transition: color 0.18s, background 0.18s;
+  flex-shrink: 0;
+  user-select: none;
+}
+
+.modal__info-btn:hover {
+  color: var(--color-text-muted);
+  background: rgba(255,255,255,0.04);
+}
+
+.modal__info-btn--activo {
+  color: var(--color-accent);
+  background: rgba(200, 169, 110, 0.08);
+}
+
+/* ═══════════════════════════════════════════
+   FICHA TÉCNICA — modal sobreposto
+   ═══════════════════════════════════════════ */
+
+.ficha-tecnica {
+  position: fixed;
+  inset: 0;
+  z-index: 1100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(10, 10, 10, 0.7);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.ficha-tecnica--aberta {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.ficha-tecnica__painel {
+  background: var(--modal-bg);
+  border: 1px solid var(--color-border);
+  width: min(520px, 90vw);
+  max-height: 80vh;
+  overflow-y: auto;
+  scrollbar-width: none;
+  padding: clamp(1.5rem, 4vw, 2.5rem);
+  position: relative;
+}
+
+.ficha-tecnica__painel::-webkit-scrollbar { display: none; }
+
+.ficha-tecnica__fechar {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-text-faint);
+  font-size: 1rem;
+  line-height: 1;
+  padding: 0.35rem 0.4rem;
+  border-radius: 2px;
+  transition: color 0.18s;
+}
+
+.ficha-tecnica__fechar:hover { color: var(--color-text); }
+
+.ficha-tecnica__titulo {
+  font-family: var(--font-titulo);
+  font-size: 1.4rem;
+  font-weight: 400;
+  color: var(--color-text);
+  margin: 0 0 0.25rem 0;
+  letter-spacing: 0.02em;
+}
+
+.ficha-tecnica__tagline {
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  font-weight: 300;
+  font-style: italic;
+  color: var(--color-text-muted);
+  margin: 0 0 2rem 0;
+  line-height: 1.6;
+}
+
+.ficha-tecnica__sep {
+  width: 100%;
+  height: 1px;
+  background: var(--color-border);
+  margin: 1.5rem 0;
+}
+
+.ficha-tecnica__label {
+  font-family: var(--font-body);
+  font-size: 0.6rem;
+  font-weight: 400;
+  color: var(--color-accent);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  margin: 0 0 0.4rem 0;
+}
+
+.ficha-tecnica__valor {
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 300;
+  color: var(--color-text);
+  margin: 0 0 1.25rem 0;
+  line-height: 1.6;
+}
+
+.ficha-tecnica__valor a {
+  color: var(--color-accent);
+  text-decoration: none;
+  transition: opacity 0.2s;
+}
+
+.ficha-tecnica__valor a:hover { opacity: 0.7; }
+
+.ficha-tecnica__licenca {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.ficha-tecnica__licenca-texto {
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  font-weight: 300;
+  color: var(--color-text-muted);
+  line-height: 1.6;
+}
+
+.ficha-tecnica__licenca-texto a {
+  color: var(--color-accent);
+  text-decoration: none;
+  transition: opacity 0.2s;
+}
+
+.ficha-tecnica__licenca-texto a:hover { opacity: 0.7; }
+
+

@@ -179,6 +179,127 @@ function copiarLink() {
 }
 
 // ══════════════════════════════════════════════════════════════
+// FICHA TÉCNICA
+// ══════════════════════════════════════════════════════════════
+
+function construirFichaTecnica() {
+  fichaTecnicaEl = document.createElement("div");
+  fichaTecnicaEl.className = "ficha-tecnica";
+  fichaTecnicaEl.setAttribute("role", "dialog");
+  fichaTecnicaEl.setAttribute("aria-modal", "true");
+  fichaTecnicaEl.setAttribute("aria-label", "Ficha técnica");
+
+  const painel = document.createElement("div");
+  painel.className = "ficha-tecnica__painel";
+
+  // Botão fechar
+  const btnFechar = document.createElement("button");
+  btnFechar.className = "ficha-tecnica__fechar";
+  btnFechar.textContent = "×";
+  btnFechar.setAttribute("aria-label", "Fechar ficha técnica");
+  btnFechar.addEventListener("click", fecharFichaTecnica);
+
+  // Título e tagline
+  const titulo = document.createElement("h2");
+  titulo.className = "ficha-tecnica__titulo";
+  titulo.textContent = "Nau Contraluz";
+
+  const tagline = document.createElement("p");
+  tagline.className = "ficha-tecnica__tagline";
+  tagline.textContent = "O que vês e o que lês não se explicam mutuamente. Apenas ressoam.";
+
+  const sep1 = document.createElement("div");
+  sep1.className = "ficha-tecnica__sep";
+
+  // Conceito
+  const labelConceito = document.createElement("p");
+  labelConceito.className = "ficha-tecnica__label";
+  labelConceito.textContent = "Conceito";
+
+  const valorConceito = document.createElement("p");
+  valorConceito.className = "ficha-tecnica__valor";
+  valorConceito.textContent = "Uma galeria onde cada fotografia é acompanhada de um texto literário — poema, aforismo ou citação — escolhido por IA no idioma original do autor. A imagem e a palavra não se explicam mutuamente. Apenas ressoam.";
+
+  const sep2 = document.createElement("div");
+  sep2.className = "ficha-tecnica__sep";
+
+  // Autoria
+  const labelAutoria = document.createElement("p");
+  labelAutoria.className = "ficha-tecnica__label";
+  labelAutoria.textContent = "Fotografias";
+
+  const valorAutoria = document.createElement("p");
+  valorAutoria.className = "ficha-tecnica__valor";
+  valorAutoria.textContent = "© DC. Todos os direitos reservados sobre as fotografias, salvo indicação em contrário.";
+
+  const sep3 = document.createElement("div");
+  sep3.className = "ficha-tecnica__sep";
+
+  // Licença
+  const labelLicenca = document.createElement("p");
+  labelLicenca.className = "ficha-tecnica__label";
+  labelLicenca.textContent = "Licença";
+
+  const licencaWrap = document.createElement("div");
+  licencaWrap.className = "ficha-tecnica__licenca";
+
+  const licencaTexto = document.createElement("p");
+  licencaTexto.className = "ficha-tecnica__licenca-texto";
+  licencaTexto.innerHTML = `As fotografias estão licenciadas sob <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" rel="license noopener">Creative Commons BY-NC-ND 4.0</a> — podes partilhar com atribuição, mas não podes usar comercialmente nem criar obras derivadas.`;
+
+  licencaWrap.appendChild(licencaTexto);
+
+  const sep4 = document.createElement("div");
+  sep4.className = "ficha-tecnica__sep";
+
+  // Repositório
+  const labelRepo = document.createElement("p");
+  labelRepo.className = "ficha-tecnica__label";
+  labelRepo.textContent = "Repositório";
+
+  const valorRepo = document.createElement("p");
+  valorRepo.className = "ficha-tecnica__valor";
+  valorRepo.innerHTML = `<a href="https://github.com/diogocarmu/galeria-fotografica" target="_blank" rel="noopener">github.com/diogocarmu/galeria-fotografica</a>`;
+
+  // Montar painel
+  painel.appendChild(btnFechar);
+  painel.appendChild(titulo);
+  painel.appendChild(tagline);
+  painel.appendChild(sep1);
+  painel.appendChild(labelConceito);
+  painel.appendChild(valorConceito);
+  painel.appendChild(sep2);
+  painel.appendChild(labelAutoria);
+  painel.appendChild(valorAutoria);
+  painel.appendChild(sep3);
+  painel.appendChild(labelLicenca);
+  painel.appendChild(licencaWrap);
+  painel.appendChild(sep4);
+  painel.appendChild(labelRepo);
+  painel.appendChild(valorRepo);
+
+  fichaTecnicaEl.appendChild(painel);
+
+  // Fechar ao clicar no overlay
+  fichaTecnicaEl.addEventListener("click", (e) => {
+    if (e.target === fichaTecnicaEl) fecharFichaTecnica();
+  });
+
+  document.body.appendChild(fichaTecnicaEl);
+}
+
+function abrirFichaTecnica() {
+  fichaTecnicaEl.classList.add("ficha-tecnica--aberta");
+  // Marcar botão ⓘ como activo
+  modalEl?.querySelector(".modal__info-btn")?.classList.add("modal__info-btn--activo");
+}
+
+function fecharFichaTecnica() {
+  fichaTecnicaEl.classList.remove("ficha-tecnica--aberta");
+  modalEl?.querySelector(".modal__info-btn")?.classList.remove("modal__info-btn--activo");
+}
+
+// ══════════════════════════════════════════════════════════════
 // MODAL — construção estática (uma vez, no DOMContentLoaded)
 // ══════════════════════════════════════════════════════════════
 
@@ -214,6 +335,9 @@ let nudgeIdiomaMostrado = false;
 let elBtnPartilha   = null;
 let elMenuPartilha  = null;
 let menuPartilhaAberto = false;
+
+// Ficha técnica
+let fichaTecnicaEl  = null;
 
 function construirModal() {
   modalEl = document.createElement("div");
@@ -253,10 +377,24 @@ function construirModal() {
   btnFechar.textContent = "×";
   btnFechar.addEventListener("click", fecharModal);
 
+  const btnInfo = document.createElement("button");
+  btnInfo.className = "modal__info-btn";
+  btnInfo.textContent = "ⓘ";
+  btnInfo.setAttribute("aria-label", "Ficha técnica");
+  btnInfo.addEventListener("click", (e) => {
+    e.stopPropagation();
+    if (fichaTecnicaEl.classList.contains("ficha-tecnica--aberta")) {
+      fecharFichaTecnica();
+    } else {
+      abrirFichaTecnica();
+    }
+  });
+
   const barraControlos = document.createElement("div");
   barraControlos.className = "modal__barra-controlos";
   barraControlos.appendChild(modos);
   barraControlos.appendChild(barraSep);
+  barraControlos.appendChild(btnInfo);
   barraControlos.appendChild(btnFechar);
 
   barra.appendChild(elBarraTitulo);
@@ -481,6 +619,7 @@ function fecharModal() {
   libertarScroll();
   elTooltip.classList.remove("modal__tooltip--visible");
   fecharMenuPartilha();
+  fecharFichaTecnica();
   fotoActiva = null;
 
   // Limpar hash sem criar entrada no histórico
@@ -969,8 +1108,12 @@ function mostrarErro(msg) {
 // ── ESC para fechar modal ─────────────────────────────────────
 
 document.addEventListener("keydown", (e) => {
-  if (e.key === "Escape" && modalEl?.classList.contains("modal--aberto")) {
-    fecharModal();
+  if (e.key === "Escape") {
+    if (fichaTecnicaEl?.classList.contains("ficha-tecnica--aberta")) {
+      fecharFichaTecnica();
+    } else if (modalEl?.classList.contains("modal--aberto")) {
+      fecharModal();
+    }
   }
 });
 
@@ -1039,6 +1182,7 @@ triggerEl.addEventListener("mouseleave", () => esconderCabecalho());
 
 async function iniciarGaleria() {
   construirModal();
+  construirFichaTecnica();
   mostrarLoader(true);
 
   try {
