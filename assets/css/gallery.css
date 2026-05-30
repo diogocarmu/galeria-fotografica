@@ -521,8 +521,8 @@
   background: none;
   border: none;
   cursor: pointer;
-  color: var(--color-text-faint);
-  font-size: 0.85rem;
+  color: var(--color-accent);
+  font-size: 1.1rem;
   line-height: 1;
   padding: 0.2rem 0.3rem;
   border-radius: 2px;
