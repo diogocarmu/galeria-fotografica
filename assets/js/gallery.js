@@ -113,6 +113,49 @@ function libertarScroll() {
 }
 
 // ══════════════════════════════════════════════════════════════
+// PARTILHA — menu flutuante
+// ══════════════════════════════════════════════════════════════
+
+function urlPartilha(foto) {
+  const base = window.location.origin + window.location.pathname.replace(/\/?$/, "");
+  return `${base}/foto/${foto.id}.html`;
+}
+
+function abrirMenuPartilha() {
+  if (!fotoActiva) return;
+  menuPartilhaAberto = true;
+  elMenuPartilha.classList.add("modal__menu-partilha--visivel");
+  // Posicionar o menu acima do botão ⤴
+  const rect = elBtnPartilha.getBoundingClientRect();
+  elMenuPartilha.style.bottom = `${window.innerHeight - rect.top + 6}px`;
+  elMenuPartilha.style.right  = `${window.innerWidth - rect.right}px`;
+}
+
+function fecharMenuPartilha() {
+  menuPartilhaAberto = false;
+  elMenuPartilha.classList.remove("modal__menu-partilha--visivel");
+}
+
+let _copiarTimeout = null;
+
+function copiarLink() {
+  if (!fotoActiva) return;
+  const url = urlPartilha(fotoActiva);
+  navigator.clipboard.writeText(url).then(() => {
+    fecharMenuPartilha();
+    elBtnPartilha.textContent = "✓";
+    if (_copiarTimeout) clearTimeout(_copiarTimeout);
+    _copiarTimeout = setTimeout(() => {
+      elBtnPartilha.textContent = "⤴";
+      _copiarTimeout = null;
+    }, 1800);
+  }).catch(() => {
+    // Fallback para browsers sem clipboard API (improvável em HTTPS)
+    fecharMenuPartilha();
+  });
+}
+
+// ══════════════════════════════════════════════════════════════
 // MODAL — construção estática (uma vez, no DOMContentLoaded)
 // ══════════════════════════════════════════════════════════════
 
@@ -143,6 +186,11 @@ let elBtnTexto      = null;
 // Flags de nudge — disparam uma vez por sessão de navegação
 let nudgeModosMostrado  = false;
 let nudgeIdiomaMostrado = false;
+
+// Elementos de partilha
+let elBtnPartilha   = null;
+let elMenuPartilha  = null;
+let menuPartilhaAberto = false;
 
 function construirModal() {
   modalEl = document.createElement("div");
@@ -195,6 +243,48 @@ function construirModal() {
 
   elRodapeExif = document.createElement("div");
   elRodapeExif.className = "modal__rodape-exif";
+
+  // Botão de partilha ⤴ — inserido no rodapé após preencherExif()
+  elBtnPartilha = document.createElement("button");
+  elBtnPartilha.className = "modal__partilha-btn";
+  elBtnPartilha.textContent = "⤴";
+  elBtnPartilha.setAttribute("aria-label", "Partilhar fotografia");
+  elBtnPartilha.addEventListener("click", (e) => {
+    e.stopPropagation();
+    if (menuPartilhaAberto) {
+      fecharMenuPartilha();
+    } else {
+      abrirMenuPartilha();
+    }
+  });
+
+  // Menu flutuante de partilha
+  elMenuPartilha = document.createElement("div");
+  elMenuPartilha.className = "modal__menu-partilha";
+  elMenuPartilha.setAttribute("role", "menu");
+
+  const opcaoCopiar = document.createElement("button");
+  opcaoCopiar.className = "modal__menu-partilha-item";
+  opcaoCopiar.setAttribute("role", "menuitem");
+  opcaoCopiar.textContent = "Copiar link";
+  opcaoCopiar.addEventListener("click", (e) => {
+    e.stopPropagation();
+    copiarLink();
+  });
+
+  const opcaoWhatsApp = document.createElement("button");
+  opcaoWhatsApp.className = "modal__menu-partilha-item";
+  opcaoWhatsApp.setAttribute("role", "menuitem");
+  opcaoWhatsApp.textContent = "WhatsApp";
+  opcaoWhatsApp.addEventListener("click", (e) => {
+    e.stopPropagation();
+    const url = urlPartilha(fotoActiva);
+    window.open(`https://wa.me/?text=${encodeURIComponent(url)}`, "_blank", "noopener");
+    fecharMenuPartilha();
+  });
+
+  elMenuPartilha.appendChild(opcaoCopiar);
+  elMenuPartilha.appendChild(opcaoWhatsApp);
 
   // ── Corpo ────────────────────────────────────────────────
 
@@ -278,8 +368,12 @@ function construirModal() {
   modalEl.appendChild(barra);
   modalEl.appendChild(elCorpo);
   modalEl.appendChild(elRodapeExif);
+  modalEl.appendChild(elMenuPartilha);
 
   modalEl.addEventListener("click", (e) => {
+    if (menuPartilhaAberto && !elMenuPartilha.contains(e.target) && e.target !== elBtnPartilha) {
+      fecharMenuPartilha();
+    }
     if (e.target === modalEl) fecharModal();
   });
 
@@ -313,6 +407,7 @@ function abrirModal(foto, modoInicial) {
 
   // EXIF no rodapé inferior (modo ▢)
   preencherExif(elRodapeExif, foto, false);
+  elRodapeExif.appendChild(elBtnPartilha);
 
   // EXIF em linha (modo ◫)
   preencherExif(elExifLinha, foto, false);
@@ -361,6 +456,7 @@ function fecharModal() {
   modalEl.classList.remove("modal--aberto");
   libertarScroll();
   elTooltip.classList.remove("modal__tooltip--visible");
+  fecharMenuPartilha();
   fotoActiva = null;
 
   // Limpar hash sem criar entrada no histórico

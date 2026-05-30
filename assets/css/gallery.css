@@ -515,6 +515,66 @@
 
 .skip-link:focus { top: 0; }
 
+/* ── Botão de partilha ⤴ no rodapé ────────────────────────── */
+
+.modal__partilha-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-text-faint);
+  font-size: 0.85rem;
+  line-height: 1;
+  padding: 0.2rem 0.3rem;
+  border-radius: 2px;
+  transition: color 0.18s;
+  margin-left: auto;
+  flex-shrink: 0;
+  user-select: none;
+  letter-spacing: 0;
+}
+
+.modal__partilha-btn:hover { color: var(--color-text-muted); }
+
+/* ── Menu flutuante de partilha ─────────────────────────────── */
+
+.modal__menu-partilha {
+  position: fixed;
+  z-index: 1100;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 2px;
+  padding: 0.25rem 0;
+  display: none;
+  flex-direction: column;
+  min-width: 9rem;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.5);
+}
+
+.modal__menu-partilha--visivel {
+  display: flex;
+}
+
+.modal__menu-partilha-item {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: var(--font-body);
+  font-size: 0.7rem;
+  font-weight: 300;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  padding: 0.55rem 1rem;
+  text-align: left;
+  transition: color 0.15s, background 0.15s;
+  user-select: none;
+}
+
+.modal__menu-partilha-item:hover {
+  color: var(--color-text);
+  background: rgba(255,255,255,0.04);
+}
+
 @media (prefers-reduced-motion: reduce) {
   .modal { transition: none; }
   .modal__modo-btn--nudge { animation: none; }
