@@ -390,12 +390,17 @@ function construirModal() {
     }
   });
 
+  // Grupo direito: ⓘ + ×
+  const barraAcoes = document.createElement("div");
+  barraAcoes.className = "modal__barra-acoes";
+  barraAcoes.appendChild(btnInfo);
+  barraAcoes.appendChild(btnFechar);
+
   const barraControlos = document.createElement("div");
   barraControlos.className = "modal__barra-controlos";
   barraControlos.appendChild(modos);
   barraControlos.appendChild(barraSep);
-  barraControlos.appendChild(btnInfo);
-  barraControlos.appendChild(btnFechar);
+  barraControlos.appendChild(barraAcoes);
 
   barra.appendChild(elBarraTitulo);
   barra.appendChild(barraControlos);

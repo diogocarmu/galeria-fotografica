@@ -160,6 +160,14 @@
   flex-shrink: 0;
 }
 
+/* Grupo direito da barra: ⓘ + × */
+.modal__barra-acoes {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  flex-shrink: 0;
+}
+
 /* Botão fechar — lado direito */
 .modal__fechar {
   background: none;
