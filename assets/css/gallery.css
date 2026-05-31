@@ -845,17 +845,19 @@
 .ficha-tecnica__painel {
   background: var(--modal-bg);
   border: 1px solid var(--color-border);
-  width: min(520px, 90vw);
-  max-height: 80vh;
-  overflow-y: auto;
-  scrollbar-width: none;
-  padding: clamp(1.5rem, 4vw, 2.5rem);
+  width: min(560px, 92vw);
+  max-height: 95vh;
+  overflow: hidden;
+  padding: clamp(1.25rem, 3vw, 2rem);
   position: relative;
 }
 
-.ficha-tecnica__painel::-webkit-scrollbar { display: none; }
-
-.ficha-tecnica__fechar {
+.ficha-tecnica__sep {
+  width: 100%;
+  height: 1px;
+  background: var(--color-border);
+  margin: 0.85rem 0;
+}
   position: absolute;
   top: 0.75rem;
   right: 0.75rem;
@@ -887,15 +889,8 @@
   font-weight: 300;
   font-style: italic;
   color: var(--color-text-muted);
-  margin: 0 0 2rem 0;
-  line-height: 1.6;
-}
-
-.ficha-tecnica__sep {
-  width: 100%;
-  height: 1px;
-  background: var(--color-border);
-  margin: 1.5rem 0;
+  margin: 0 0 0.5rem 0;
+  line-height: 1.5;
 }
 
 .ficha-tecnica__label {
@@ -913,8 +908,8 @@
   font-size: 0.85rem;
   font-weight: 300;
   color: var(--color-text);
-  margin: 0 0 1.25rem 0;
-  line-height: 1.6;
+  margin: 0 0 0.5rem 0;
+  line-height: 1.5;
 }
 
 .ficha-tecnica__valor a {

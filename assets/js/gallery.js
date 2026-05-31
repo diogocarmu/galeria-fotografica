@@ -218,7 +218,7 @@ function construirFichaTecnica() {
 
   const valorConceito = document.createElement("p");
   valorConceito.className = "ficha-tecnica__valor";
-  valorConceito.textContent = "Uma galeria onde cada fotografia é acompanhada de um texto literário — poema, aforismo ou citação — escolhido por IA no idioma original do autor. A imagem e a palavra não se explicam mutuamente. Apenas ressoam.";
+  valorConceito.textContent = "Cada imagem espera uma palavra. A IA escolhe o autor e a palavra certa. O resto é diálogo.";
 
   const sep2 = document.createElement("div");
   sep2.className = "ficha-tecnica__sep";
@@ -245,7 +245,7 @@ function construirFichaTecnica() {
 
   const licencaTexto = document.createElement("p");
   licencaTexto.className = "ficha-tecnica__licenca-texto";
-  licencaTexto.innerHTML = `As fotografias estão licenciadas sob <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" rel="license noopener">Creative Commons BY-NC-ND 4.0</a> — podes partilhar com atribuição, mas não podes usar comercialmente nem criar obras derivadas.`;
+  licencaTexto.innerHTML = `As fotografias estão licenciadas sob <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" rel="license noopener">Creative Commons BY-NC-ND 4.0</a>. Podes partilhar com atribuição, mas não podes usar comercialmente nem criar obras derivadas.`;
 
   licencaWrap.appendChild(licencaTexto);
 
