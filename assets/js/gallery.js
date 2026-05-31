@@ -230,7 +230,7 @@ function construirFichaTecnica() {
 
   const valorAutoria = document.createElement("p");
   valorAutoria.className = "ficha-tecnica__valor";
-  valorAutoria.textContent = "© DC. Todos os direitos reservados sobre as fotografias, salvo indicação em contrário.";
+  valorAutoria.textContent = "© Diogo Carmo, 2017-2026";
 
   const sep3 = document.createElement("div");
   sep3.className = "ficha-tecnica__sep";
