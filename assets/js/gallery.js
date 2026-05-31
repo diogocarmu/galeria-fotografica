@@ -218,7 +218,7 @@ function construirFichaTecnica() {
 
   const valorConceito = document.createElement("p");
   valorConceito.className = "ficha-tecnica__valor";
-  valorConceito.textContent = "Cada imagem espera uma palavra. A IA escolhe o autor e a palavra certa. O resto é diálogo.";
+  valorConceito.textContent = "Cada imagem espera uma palavra. A IA escolhe o autor e a voz certa. O resto é diálogo silencioso.";
 
   const sep2 = document.createElement("div");
   sep2.className = "ficha-tecnica__sep";
@@ -489,7 +489,7 @@ function construirModal() {
 
   elViaIa = document.createElement("span");
   elViaIa.className = "modal__via-ia";
-  elViaIa.textContent = " · via IA";
+  elViaIa.innerHTML = " · via <span class=\"modal__via-ia-link\">IA</span>";
   elViaIa.setAttribute("role", "button");
   elViaIa.setAttribute("aria-label", "Informação sobre a selecção por IA");
   elViaIa.setAttribute("tabindex", "0");
