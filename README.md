@@ -1,12 +1,22 @@
 # Nau Contraluz
 
-Galeria fotográfica estática publicada em GitHub Pages. Cada fotografia é acompanhada de um texto literário real (poema, aforismo ou citação) seleccionado por IA, apresentado no idioma original do autor, em português e em inglês.
+Galeria fotográfica estática publicada em GitHub Pages. Cada fotografia é acompanhada de um texto literário real selecionado por IA no idioma original do autor, com tradução para português e inglês.
 
-Cada imagem espera uma palavra. A IA escolhe a voz certa. O resto é diálogo.
+**[Ver galeria](https://diogocarmu.github.io/galeria-fotografica/)**
 
-**URL:** https://diogocarmu.github.io/galeria-fotografica/
-**Autoria:** © Diogo Carmo, 2017-2026
-**Licença:** [Creative Commons BY-NC-ND 4.0](https://creativecommons.org/licenses/by-nc-nd/4.0/)
+---
+
+A fotografia entra numa pasta local. O resto acontece sozinho: Python extrai EXIF, converte para WebP e faz POST a um Google Apps Script, que chama o Gemini 2.5 Flash para selecionar o texto literário, grava no Sheets e commita sitemap e página de partilha diretamente no repositório via GitHub API.
+
+O Gemini não corre no browser. É chamado durante a ingestão, uma vez por fotografia. O nível de confiança da seleção (alta, média ou baixa) fica gravado e é exposto ao visitante no front-end.
+
+Cada fotografia tem uma página de redirect própria com Open Graph individual, gerada e commitada programaticamente. Isto permite pré-visualização correta ao partilhar em WhatsApp, Telegram ou LinkedIn sem qualquer servidor.
+
+O ID de cada fotografia é um hash MD5 do ficheiro original: determinístico, reproduzível e imune a duplicados.
+
+---
+
+© Diogo Carmo, 2017-2026 · [CC BY-NC-ND 4.0](https://creativecommons.org/licenses/by-nc-nd/4.0/)
 
 ---
 
