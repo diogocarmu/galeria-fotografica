@@ -4,7 +4,7 @@
   xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   <url>
     <loc>https://diogocarmu.github.io/galeria-fotografica/</loc>
-    <lastmod>2026-05-30</lastmod>
+    <lastmod>2026-06-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
     <image:image>
@@ -256,6 +256,48 @@ Renditi conto che tutto si connette a tutto il resto.</image:caption>
       <image:loc>https://lh3.googleusercontent.com/d/1JQWTFaNLmLoGZMAxSE64GK_v45DjMoNv</image:loc>
       <image:title>Die Sprache der Seele im Sturm</image:title>
       <image:caption>Symbole sind die Sprache der Seele.</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://lh3.googleusercontent.com/d/1Z06li5FL8dfJcOn08Zk5OwdyKnLFjX6n</image:loc>
+      <image:title>Unseen Strength Below</image:title>
+      <image:caption>Deep roots are not reached by the frost.</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://lh3.googleusercontent.com/d/1Q0IVHmpOUYYVg4EboJTlYNjMdwmezMkR</image:loc>
+      <image:title>Where the Ocean Writes</image:title>
+      <image:caption>The edge of the sea is a strange and beautiful place. All life that exists there is poised for the great ebb and flow of the tides, and for the violence of the storms.</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://lh3.googleusercontent.com/d/1TgHK1GPauJbydgdrHy1SAGGvo_DWiBi-</image:loc>
+      <image:title>La Profondeur de la Surface</image:title>
+      <image:caption>Le plus profond, c&apos;est la peau.</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://lh3.googleusercontent.com/d/1x3BtgXWfeXSrsHUBj7wdMhw8quvtdfU-</image:loc>
+      <image:title>The Echo of a Touch</image:title>
+      <image:caption>We leave traces of ourselves wherever we go, on whatever we touch.</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://lh3.googleusercontent.com/d/1Du9Avo8IuzKIwSyZPQkZHK-WfEnZA4C5</image:loc>
+      <image:title>Passi Verso la Luce</image:title>
+      <image:caption>M&apos;illumino
+d&apos;immenso</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://lh3.googleusercontent.com/d/1etViL2QSncLQ1rLEJDuVSAbqhrcMYOZ5</image:loc>
+      <image:title>How the Light Gets In</image:title>
+      <image:caption>There is a crack in everything, that&apos;s how the light gets in.</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://lh3.googleusercontent.com/d/1QWkhM0L3oyBXGemBsxaJj1aH1KUSU4I4</image:loc>
+      <image:title>The Deep&apos;s Silent Oracle</image:title>
+      <image:caption>There is, one knows not what sweet mystery about this sea, whose gently awful stirrings seem to speak of some still grander agency at work than ordinary.</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://lh3.googleusercontent.com/d/1msJv_4KwLxKAmjmY84x6BfTTLM_v_Rf9</image:loc>
+      <image:title>The Best-Laid Schemes</image:title>
+      <image:caption>The best-laid schemes o&apos; Mice an&apos; Men
+Gang aft agley,</image:caption>
     </image:image>
   </url>
 </urlset>
