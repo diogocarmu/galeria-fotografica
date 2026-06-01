@@ -2,7 +2,7 @@
 
 Galeria fotográfica estática publicada em GitHub Pages. Cada fotografia é acompanhada de um texto literário real selecionado por IA no idioma original do autor, com tradução para português e inglês.
 
-**[Ver galeria](https://diogocarmu.github.io/galeria-fotografica/)**
+**[Ver galeria](https://naucontraluz.diogocarmo.cc/)**
 
 ---
 
