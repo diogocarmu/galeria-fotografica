@@ -4,7 +4,7 @@
   xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   <url>
     <loc>https://naucontraluz.diogocarmo.cc/</loc>
-    <lastmod>2026-08-27</lastmod>
+    <lastmod>2026-10-21</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
     <image:image>
@@ -798,11 +798,6 @@ And one man in his time plays many parts,</image:caption>
       <image:caption>Bir şelale sessiz olamaz, su akışını durduramaz. O doğanın sesidir!</image:caption>
     </image:image>
     <image:image>
-      <image:loc>https://lh3.googleusercontent.com/d/1_wcGfLY_GCfUbKh_sojaS58kEsSD74nt</image:loc>
-      <image:title>Light&apos;s Architectural Embrace</image:title>
-      <image:caption>Light, God&apos;s eldest daughter, is a principal beauty in a building.</image:caption>
-    </image:image>
-    <image:image>
       <image:loc>https://lh3.googleusercontent.com/d/13k24fsygk02cGEmE-9oJIG5kXByjNpPh</image:loc>
       <image:title>Curtain of Twilight</image:title>
       <image:caption>Twilight drops her curtain down, and pins it with a star.</image:caption>
@@ -885,13 +880,15 @@ Ecco colei che tutto il mondo appuzza!</image:caption>
     </image:image>
     <image:image>
       <image:loc>https://lh3.googleusercontent.com/d/1RWUSMfKUqwUsK2UQnKUhINQuTr8BCucu</image:loc>
-      <image:title></image:title>
-      <image:caption></image:caption>
+      <image:title>Aliento del Bandolero</image:title>
+      <image:caption>El viento, un bandolero, derriba
+las columnatas de la niebla.</image:caption>
     </image:image>
     <image:image>
       <image:loc>https://lh3.googleusercontent.com/d/1A6TXL5vrmGdKVyVuGx_Gv3YLVqTWOcQr</image:loc>
-      <image:title></image:title>
-      <image:caption></image:caption>
+      <image:title>Celestial Light on Deep Waters</image:title>
+      <image:caption>The sea hath its pearls,
+The heaven hath its stars;</image:caption>
     </image:image>
     <image:image>
       <image:loc>https://lh3.googleusercontent.com/d/131I34aMZQN2ZqjMr2D6rdx8d5YrdoB-V</image:loc>
@@ -910,23 +907,132 @@ Ecco colei che tutto il mondo appuzza!</image:caption>
     </image:image>
     <image:image>
       <image:loc>https://lh3.googleusercontent.com/d/1ha23XZQ4oVrdvwh6oCAfNQofBDhgfG7E</image:loc>
-      <image:title></image:title>
-      <image:caption></image:caption>
+      <image:title>Il Cortile della Visione e il Cielo Aperto</image:title>
+      <image:caption>L&apos;architettura è l&apos;arte di fabbricare con bellezza.</image:caption>
     </image:image>
     <image:image>
       <image:loc>https://lh3.googleusercontent.com/d/1RbhPaZF8Yqvfhckf70WQOFH15Pr4tMhh</image:loc>
-      <image:title></image:title>
-      <image:caption></image:caption>
+      <image:title>The World&apos;s Rippled Reflection</image:title>
+      <image:caption>Everything is a wave. Everything is a ripple. And every ripple is a reflection of the pond.</image:caption>
     </image:image>
     <image:image>
       <image:loc>https://lh3.googleusercontent.com/d/163JnPUC3rbGeh2ploUGjrGKd3Bm6dZDo</image:loc>
-      <image:title></image:title>
-      <image:caption></image:caption>
+      <image:title>Ἡ Ζωή ὡς Μορφὴ τῆς Σκέψης</image:title>
+      <image:caption>Ὁ βίος ἡμῶν ἐστιν οἷα αἱ διανοίαι ἡμῶν ποιοῦσιν.</image:caption>
     </image:image>
     <image:image>
       <image:loc>https://lh3.googleusercontent.com/d/1mFFHvttFM8qSlyTb9wGAh7uW-YkG_uIw</image:loc>
-      <image:title></image:title>
-      <image:caption></image:caption>
+      <image:title>L&apos;Envol de l&apos;Esprit</image:title>
+      <image:caption>L&apos;homme ne peut découvrir de nouveaux océans s&apos;il n&apos;a pas le courage de perdre de vue le rivage.</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://lh3.googleusercontent.com/d/1tZH-WmoZxW6UQxLz8YFRAdSNa3RlkLh2</image:loc>
+      <image:title>Heimatlose Liberdade</image:title>
+      <image:caption>Heimat ist nicht da, wo man wohnt, sondern wo man verstanden wird.</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://lh3.googleusercontent.com/d/1VdhjYZaf6KzkK1BdAVwxudj_uJkzTufu</image:loc>
+      <image:title>Summer&apos;s Gentle Pause</image:title>
+      <image:caption>Rest is not idleness, and to lie sometimes on the grass under trees on a summer&apos;s day, listening to the murmur of the water, or watching the clouds float across the sky, is by no means a waste of time.</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://lh3.googleusercontent.com/d/102gnXVoX-wZ8E23gfD3Ip63ziLd0Qvm2</image:loc>
+      <image:title>Øjeblikkets Dybde</image:title>
+      <image:caption>At rejse er at leve.</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://lh3.googleusercontent.com/d/1MgNQ4x99d2wRxWSvl1qMpKoqDDmBaziI</image:loc>
+      <image:title>The Unyielding Green</image:title>
+      <image:caption>On the last day of the world
+I would want to plant a tree</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://lh3.googleusercontent.com/d/1jhOvI_sxNWW7ch8vP5v8M2tr4KCxxpTe</image:loc>
+      <image:title>Onde a Luz Se Atreve</image:title>
+      <image:caption>La lumière de la vérité est pour ceux qui n&apos;ont pas peur des ténèbres.</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://lh3.googleusercontent.com/d/1DY4SIUVb7O1smKc7R3PxNqnJUXiOLDxK</image:loc>
+      <image:title>L&apos;Étreinte Fugace de l&apos;Océan</image:title>
+      <image:caption>L&apos;Éternité.
+C&apos;est la mer allée
+Avec le soleil.</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://lh3.googleusercontent.com/d/1LTZLkJ9XicDhALal03QShLNtU8XT_z1l</image:loc>
+      <image:title>La luz, artífice del reflejo</image:title>
+      <image:caption>La luz es el personaje más importante de la fotografía.</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://lh3.googleusercontent.com/d/1Nr5Kp0-5iBz4CtE-YVjn2HIV-cPd6sSa</image:loc>
+      <image:title>La Marche Intérieure</image:title>
+      <image:caption>La plus grande chose du monde, c&apos;est de savoir être à soi.</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://lh3.googleusercontent.com/d/1iJnm-Ws41A-CAQnel-V5-v8P4Vgtc_iu</image:loc>
+      <image:title>The Journey of Perception</image:title>
+      <image:caption>One&apos;s destination is never a place, but a new way of seeing things.</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://lh3.googleusercontent.com/d/1mlCnHjKMQlNTIweZhaYlN8rmsNFRRiXa</image:loc>
+      <image:title>Oltre la Superficie</image:title>
+      <image:caption>Si è mai abbastanza attenti a ciò che è dietro le cose, a ciò che si nasconde?</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://lh3.googleusercontent.com/d/1ibECTiYC9O81a-j4N0hisvbjWOq4yi1z</image:loc>
+      <image:title>جایی که نور وارد می شود</image:title>
+      <image:caption>زخم جایی است که نور به تو وارد می‌شود.</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://lh3.googleusercontent.com/d/1kL1aY-8-BXvNiavVfDEg-Is1C-u7qSdf</image:loc>
+      <image:title>L&apos;Entre-Deux Révélé</image:title>
+      <image:caption>Ce qui est intéressant, c&apos;est l&apos;entre-deux.</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://lh3.googleusercontent.com/d/1LLsX4TI9Dr_w50nGFSj_WtflVTtADFRi</image:loc>
+      <image:title>The Path Under the Ancient Guard</image:title>
+      <image:caption>A tree gives glory to God by being a tree.</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://lh3.googleusercontent.com/d/1emvHvIQZKDkX2SMVL03m8gzG5bMarEe0</image:loc>
+      <image:title>The Hidden Passage&apos;s Promise</image:title>
+      <image:caption>The cave you fear to enter holds the treasure you seek.</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://lh3.googleusercontent.com/d/1UXuFD_KzczgVE8JPr8n9mWSl88hMRqke</image:loc>
+      <image:title>Der Pfad der Wahrheit im Dickicht</image:title>
+      <image:caption>Der unbefestigte Weg ist der Weg der Wahrheit.</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://lh3.googleusercontent.com/d/1_1ytcZ5TbGXEjmo4rwqwAVlZXtiWZcJ4</image:loc>
+      <image:title>Der Sieg der Zeit</image:title>
+      <image:caption>Die Ruine ist nicht bloß das Bruchstück eines Bauwerks oder einer natürlichen Sache; sie ist vielmehr das Symbol des Triumphes der Natur über ein Menschenwerk, oder des Triumphes der Zeit über ein Menschenwerk.</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://lh3.googleusercontent.com/d/1V3CyFmicb7OVA3UR8z7BbUSH5dV2MrTX</image:loc>
+      <image:title>The Sincerest Affection</image:title>
+      <image:caption>There is no love sincerer than the love of food.</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://lh3.googleusercontent.com/d/16AoHYWnqi5N-vo--HkH60ddyMkw_DLC8</image:loc>
+      <image:title>Light from a Stone Heart</image:title>
+      <image:caption>Home is a name, a word, it is a strong one; stronger than magician ever spoke, or spirit ever answered to, in the strongest conjuration.</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://lh3.googleusercontent.com/d/1s9BcBkKWmyVkw0Bk2kHzuGhLKo78MkZP</image:loc>
+      <image:title>Olhares e Horizontes</image:title>
+      <image:caption>A vida é o que fazemos dela. As viagens são os viajantes. O que vemos não é o que vemos, senão o que somos.</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://lh3.googleusercontent.com/d/1HtYYx6-I_fn1sRQBHWlb73yxid7tmDAc</image:loc>
+      <image:title>Osäkerhetens lugn</image:title>
+      <image:caption>Allting är så förfärligt osäkert, och just det gör att jag känner mig lugn.</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://lh3.googleusercontent.com/d/1sj7Hc08BB41XAi866jQ9M0nR1UMnTjHX</image:loc>
+      <image:title>No Caminho da Luz e da Sombra</image:title>
+      <image:caption>No hay luz sin sombra, ni vida sin morte. 
+No hay camino sin obstáculos, ni alegria sin tristezas.</image:caption>
     </image:image>
   </url>
 </urlset>
