@@ -4,7 +4,7 @@
   xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   <url>
     <loc>https://naucontraluz.diogocarmo.cc/</loc>
-    <lastmod>2026-10-21</lastmod>
+    <lastmod>2026-11-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
     <image:image>
@@ -1033,6 +1033,26 @@ Avec le soleil.</image:caption>
       <image:title>No Caminho da Luz e da Sombra</image:title>
       <image:caption>No hay luz sin sombra, ni vida sin morte. 
 No hay camino sin obstáculos, ni alegria sin tristezas.</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://lh3.googleusercontent.com/d/1PgRtMGyb-xKeZpjLnbCq04U20cRvvzmH</image:loc>
+      <image:title>A Fala Oculta do Chão</image:title>
+      <image:caption>A cidade é um lugar onde as pedras falam se as soubermos ouvir.</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://lh3.googleusercontent.com/d/1MSCMwd-nrwBcGujRRPgG7WcKGjr4N3ot</image:loc>
+      <image:title>The Illuminated Choice</image:title>
+      <image:caption>There are two ways of spreading light: to be the candle or the mirror that reflects it.</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://lh3.googleusercontent.com/d/1wrG2EHR8W-Ntxp-GYLH34Sn8yk7Gge4N</image:loc>
+      <image:title>The Only Path</image:title>
+      <image:caption>The sea is the only way out.</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://lh3.googleusercontent.com/d/1EdTTCOs6iTAweKxItbSjyKedz21glIb8</image:loc>
+      <image:title>The Deepest Perch</image:title>
+      <image:caption>Nature is not a place to visit. It is home.</image:caption>
     </image:image>
   </url>
 </urlset>
